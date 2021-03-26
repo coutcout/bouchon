@@ -1,0 +1,11 @@
+bouchon:
+  endpoints:
+    - name: test1
+      folderName: folder1
+      urlTemplate: url1
+      fileTemplate: file1
+    - name: test2
+      folderName: folder2
+      urlTemplate: url2
+      fileTemplate: file2
+  test: test

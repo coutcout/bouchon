@@ -1,0 +1,2 @@
+bouchon.errors:
+  ERR-001: "Le endpoint n'est pas géré"
