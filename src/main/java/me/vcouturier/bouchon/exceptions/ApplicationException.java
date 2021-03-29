@@ -13,6 +13,6 @@ public class ApplicationException extends Exception{
 
     @Override
     public String getMessage() {
-        return errorMessage + ": " + errorMessage;
+        return errorCode + ": " + errorMessage;
     }
 }

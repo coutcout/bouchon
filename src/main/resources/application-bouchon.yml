@@ -9,3 +9,5 @@ bouchon:
       urlTemplate: url2
       fileTemplate: file2
   test: test
+  folder:
+    data: "path_to_data_folder"

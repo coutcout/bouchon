@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class EndPoint {
     private String name;
-    private String folder;
+    private String folderName;
     private String urlTemplate;
     private String fileTemplate;
 }

@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 public enum ErrorsEnum {
 
-    INVALID_ENDPOINT ("ERR-001");
+    INVALID_ENDPOINT ("ERR-INIT-001"),
+    DATAFOLDER_MISSING ("ERR-INIT-002");
 
     private String code;
 }

@@ -5,11 +5,11 @@
 ### 1.0.0
 
 * Initialisation des endpoints
-    * Création des répertoires s'ils n'existent pas
+    * ~~Création des répertoires s'ils n'existent pas~~
     * Création d'une liste de paramètres commun à l'url et au fichier
     * Création de la regex de l'url à partir du template de l'url
     
-* Appel d'un endpoint
+* Appel d'un endpoint (GET)
     * Parsing de l'url à partir de la regex pour récupérer les paramètres
     * Génération du nom du fichier recherché
     * Récupération du fichier
@@ -29,3 +29,4 @@
 * Service de suppression d'un fichier
     * Suppression du fichier dans le bon endpoint
     * Gestion des erreur
+  

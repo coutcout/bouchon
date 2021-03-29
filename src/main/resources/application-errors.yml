@@ -1,2 +1,3 @@
 bouchon.errors:
-  ERR-001: "Le endpoint n'est pas géré"
+  ERR-INIT-001: "Le endpoint n'est pas géré"
+  ERR-INIT-002: "Le dossier data ( ${bouchon.folder.data} ) n'existe pas"
