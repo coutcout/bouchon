@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface EndPointService {
 
-    public Optional<EndPoint> getEndPointCalled(String endpoint);
+    Optional<EndPoint> getEndPointCalled(String endpoint);
 }
