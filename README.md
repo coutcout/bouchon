@@ -6,6 +6,7 @@
 
 * Initialisation des endpoints
     * ~~Création des répertoires s'ils n'existent pas~~
+    * ~~Création du mécanisme de regex paramétrable~~
     * Création d'une liste de paramètres commun à l'url et au fichier
     * Création de la regex de l'url à partir du template de l'url
     
