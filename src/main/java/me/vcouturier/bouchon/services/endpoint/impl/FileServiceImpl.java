@@ -2,7 +2,7 @@ package me.vcouturier.bouchon.services.endpoint.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
-import me.vcouturier.bouchon.exceptions.enums.ErrorsEnum;
+import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.services.endpoint.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class FileServiceImpl implements FileService {
 
             return file.mkdir();
         } else {
-            throw applicationExceptionFactory.createApplicationException(ErrorsEnum.DATAFOLDER_MISSING);
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.ERR_DATAFOLDER_MISSING);
         }
 
     }

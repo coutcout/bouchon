@@ -13,6 +13,6 @@ import java.util.Map;
 @Component
 @Log4j2
 @ConfigurationProperties(prefix = "bouchon")
-public class ErrorProperties {
-    private Map<String, String> errors;
+public class MessagesProperties {
+    private Map<String, String> messages;
 }

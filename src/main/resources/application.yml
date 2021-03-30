@@ -7,5 +7,5 @@ spring:
       name: bouchon
     include:
       - bouchon
-      - errors
+      - messages
       - custom-regex

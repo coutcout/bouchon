@@ -4,6 +4,13 @@ bouchon:
       folderName: folder1
       urlTemplate: url1
       fileTemplate: file1
+      parameters:
+        - tag: numberA
+          type: number
+        - tag: title1
+          type: string
+        - tag: title2
+          type: test
     - name: test2
       folderName: folder2
       urlTemplate: url2
