@@ -8,6 +8,9 @@
     * ~~Création des répertoires s'ils n'existent pas~~
     * ~~Création du mécanisme de regex paramétrable~~
     * Création d'une liste de paramètres commun à l'url et au fichier
+        * ~~Vérification de la validité de l'URL~~
+        * Vérification de la validité du template de fichier
+        * Comparaison des paramètres de l'URL et du Fichier
     * Création de la regex de l'url à partir du template de l'url
     
 * Appel d'un endpoint (GET)

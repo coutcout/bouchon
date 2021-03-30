@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ApplicationException extends Exception{
+public class ApplicationRuntimeException extends RuntimeException{
     private String errorCode;
     private String errorMessage;
 

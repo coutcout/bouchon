@@ -1,10 +1,10 @@
-package me.vcouturier.bouchon.services.endpoint.impl;
+package me.vcouturier.bouchon.services.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
-import me.vcouturier.bouchon.services.endpoint.FileService;
+import me.vcouturier.bouchon.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

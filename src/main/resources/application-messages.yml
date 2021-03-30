@@ -3,8 +3,13 @@ bouchon.messages:
   ERR-INIT-001: "Le endpoint n''est pas géré"
   ERR-INIT-002: "Le dossier data ( ${bouchon.folder.data} ) n''existe pas"
   ERR-INIT-003: "Le type de regex ''{0}'' n''existe pas"
-  ERR_INIT-004: "Une erreur est survenue lors de l''initialisation du endpoint ''{0}''"
+  ERR-INIT-004: "Une erreur est survenue lors de l''initialisation du endpoint ''{0}'': {1}"
+  ERR-INIT-005: "L''URL requiert une regex d''un type ''{0}'' qui n''existe pas"
+  ERR-INIT-006: "L''URL possède plusieurs fois la regex ''{0}''"
+
+  ERR-MSG-001: "Le message ''{0}'' n''existe pas"
 
   # Debug
   DEBUG-INIT-001: "Enregistrement du endpoint ''{0}''"
   DEBUG-INIT-002: "Le dossier ''{0}'' n''a pas été initialisé"
+  DEBUG-REGEX-001: "La regex ''{0}'' a été trouvée"

@@ -4,7 +4,7 @@ import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.model.EndPoint;
-import me.vcouturier.bouchon.services.endpoint.EndPointService;
+import me.vcouturier.bouchon.services.EndPointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

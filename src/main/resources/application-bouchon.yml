@@ -2,18 +2,16 @@ bouchon:
   endpoints:
     - name: test1
       folderName: folder1
-      urlTemplate: url1
+      urlTemplate: url1{numberA}{numberA}
       fileTemplate: file1
       parameters:
         - tag: numberA
           type: number
         - tag: title1
           type: string
-        - tag: title2
-          type: test
     - name: test2
       folderName: folder2
-      urlTemplate: url2
+      urlTemplate: url2{blabl}
       fileTemplate: file2
   test: test
   folder:

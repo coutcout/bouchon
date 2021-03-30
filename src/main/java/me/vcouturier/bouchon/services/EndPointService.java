@@ -1,4 +1,4 @@
-package me.vcouturier.bouchon.services.endpoint;
+package me.vcouturier.bouchon.services;
 
 import me.vcouturier.bouchon.model.EndPoint;
 
