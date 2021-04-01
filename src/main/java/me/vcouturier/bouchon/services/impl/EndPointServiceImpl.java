@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +58,10 @@ public class EndPointServiceImpl implements EndPointService {
                 initializeParametersMap(e);
 
                 // URL Verification
-                verifyURL(e);
+                verifyStringTemplate(e.getUrlTemplate());
+
+                // Filt Template Verification
+                verifyStringTemplate(e.getFileTemplate());
 
                 // Caching endpoints
                 mapEndpoint.put(e.getName(), e);
@@ -86,8 +88,8 @@ public class EndPointServiceImpl implements EndPointService {
         }
     }
 
-    private void verifyURL(EndPoint e) throws ApplicationException {
-        List<String> urlRegex = regexService.getRegexFromString(e.getUrlTemplate());
+    private void verifyStringTemplate(String template) throws ApplicationException {
+        List<String> urlRegex = regexService.getRegexFromString(template);
 
         // Duplicate elements verification
         Optional<String> regex = me.vcouturier.bouchon.utils.CollectionUtils.getFirstDuplicatedEntry(urlRegex);
@@ -97,7 +99,7 @@ public class EndPointServiceImpl implements EndPointService {
 
         // Valid elements verification
         regex = urlRegex.stream()
-                .filter(s -> typeRegexService.getTypeRegex(s).isEmpty())
+                .filter(s -> typeRegexService.getTypeRegex(s).isPresent())
                 .findAny();
         if(regex.isPresent()){
             throw applicationExceptionFactory.createApplicationException(MessageEnum.ERR_URL_UNKOWN_REGEX, regex.get());
