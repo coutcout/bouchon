@@ -7,6 +7,7 @@ import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.model.EndPoint;
 import me.vcouturier.bouchon.model.Parameter;
 import me.vcouturier.bouchon.properties.BouchonProperties;
+import me.vcouturier.bouchon.regex.model.ITypeRegex;
 import me.vcouturier.bouchon.regex.service.RegexService;
 import me.vcouturier.bouchon.regex.service.TypeRegexService;
 import me.vcouturier.bouchon.services.EndPointService;
@@ -57,11 +58,11 @@ public class EndPointServiceImpl implements EndPointService {
                 // parameters map initialization
                 initializeParametersMap(e);
 
-                // URL Verification
-                verifyStringTemplate(e.getUrlTemplate());
+                // Validation of the endpoint parameters
+                validateEndpoint(e);
 
-                // Filt Template Verification
-                verifyStringTemplate(e.getFileTemplate());
+                // Creation real regex
+
 
                 // Caching endpoints
                 mapEndpoint.put(e.getName(), e);
@@ -69,6 +70,23 @@ public class EndPointServiceImpl implements EndPointService {
                 log.error(messageService.formatMessage(MessageEnum.ERR_ENDPOINT_INIT, e.getName(), ex.getMessage()));
             }
 
+        }
+    }
+
+    private void validateEndpoint(EndPoint e) throws ApplicationException {
+        // URL Verification
+        List<String> urlRegex = verifyStringTemplate(e.getUrlTemplate(), e.getMapParameters());
+
+        // File Template Verification
+        List<String> fileRegex = verifyStringTemplate(e.getFileTemplate(), e.getMapParameters());
+
+        // Comparing both file and url regex
+        verifyTemplatesCompatibility(urlRegex, fileRegex);
+    }
+
+    private void verifyTemplatesCompatibility(List<String> urlRegex, List<String> fileRegex) throws ApplicationException {
+        if(!CollectionUtils.isEqualCollection(urlRegex, fileRegex)){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.ERR_REGEX_NOT_EQUALS);
         }
     }
 
@@ -88,22 +106,24 @@ public class EndPointServiceImpl implements EndPointService {
         }
     }
 
-    private void verifyStringTemplate(String template) throws ApplicationException {
-        List<String> urlRegex = regexService.getRegexFromString(template);
+    private List<String> verifyStringTemplate(String template, Map<String, ITypeRegex> mapEndpointRegex) throws ApplicationException {
+        List<String> regexList = regexService.getRegexFromString(template);
 
         // Duplicate elements verification
-        Optional<String> regex = me.vcouturier.bouchon.utils.CollectionUtils.getFirstDuplicatedEntry(urlRegex);
+        Optional<String> regex = me.vcouturier.bouchon.utils.CollectionUtils.getFirstDuplicatedEntry(regexList);
         if(regex.isPresent()){
             throw applicationExceptionFactory.createApplicationException(MessageEnum.ERR_URL_DUPLICATE_REGEX, regex.get());
         }
 
         // Valid elements verification
-        regex = urlRegex.stream()
-                .filter(s -> typeRegexService.getTypeRegex(s).isPresent())
+        regex = regexList.stream()
+                .filter(s -> mapEndpointRegex.get(s) == null)
                 .findAny();
         if(regex.isPresent()){
             throw applicationExceptionFactory.createApplicationException(MessageEnum.ERR_URL_UNKOWN_REGEX, regex.get());
         }
+
+        return regexList;
     }
 
     @Override

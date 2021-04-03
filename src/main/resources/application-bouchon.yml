@@ -3,11 +3,11 @@ bouchon:
     - name: test1
       folderName: folder1
       urlTemplate: url1{numberA}
-      fileTemplate: file1{numberA}{numberA}
+      fileTemplate: file1{numberA}{title}
       parameters:
         - tag: numberA
           type: number
-        - tag: title1
+        - tag: title
           type: string
     - name: test2
       folderName: folder2
