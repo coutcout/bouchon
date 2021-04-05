@@ -1,9 +1,10 @@
 package me.vcouturier.bouchon.services.impl;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
-import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
+import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.model.EndPoint;
 import me.vcouturier.bouchon.model.Parameter;
 import me.vcouturier.bouchon.properties.BouchonProperties;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 public class EndPointServiceImpl implements EndPointService {
 
@@ -62,7 +63,7 @@ public class EndPointServiceImpl implements EndPointService {
                 validateEndpoint(e);
 
                 // Creation real regex
-
+                //String urlRegex =
 
                 // Caching endpoints
                 mapEndpoint.put(e.getName(), e);

@@ -21,4 +21,5 @@ public class EndPoint {
 
     // From initialization
     private Map<String, ITypeRegex> mapParameters = new HashMap<>();
+    private String urlRegex;
 }

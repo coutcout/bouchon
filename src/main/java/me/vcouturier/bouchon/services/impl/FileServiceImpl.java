@@ -1,9 +1,9 @@
 package me.vcouturier.bouchon.services.impl;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
-import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
+import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Log4j2
+@Slf4j
 @Service
 public class FileServiceImpl implements FileService {
     @Value("${bouchon.folder.data}")

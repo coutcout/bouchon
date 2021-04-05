@@ -1,0 +1,10 @@
+logging:
+  file:
+    path: ./logs
+  pattern:
+    console: "%d [T-%T] %highlight{[%-6p] %c{2.}(%F:%L) - %m%n}"
+    file: "%d [T-%T] [%-6p] %c{1.}(%F:%L) - %m%n"
+  level:
+    root: "info"
+    me.vcouturier: "debug"
+

@@ -6,4 +6,5 @@ public interface RegexService {
 
     List<String> getRegexFromString(String string);
 
+
 }

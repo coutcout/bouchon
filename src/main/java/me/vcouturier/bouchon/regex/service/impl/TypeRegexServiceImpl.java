@@ -1,6 +1,6 @@
 package me.vcouturier.bouchon.regex.service.impl;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import me.vcouturier.bouchon.regex.enums.TypeRegex;
 import me.vcouturier.bouchon.regex.model.CustomTypeRegex;
 import me.vcouturier.bouchon.regex.model.ITypeRegex;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 public class TypeRegexServiceImpl implements TypeRegexService {
 
