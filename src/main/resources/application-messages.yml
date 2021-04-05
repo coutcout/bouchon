@@ -10,7 +10,12 @@ bouchon.messages:
 
   ERR-MSG-001: "Le message ''{0}'' n''existe pas"
 
+  # Réception d'une requête
+  ENDPOINT-001: "Plusieurs endpoints peuvent correspondre à la demande: {0}"
+  ENDPOINT-002: "Aucun endpoint n''a été trouvé pour la recherche ''{0}''"
+
   # Debug
   DEBUG-INIT-001: "Enregistrement du endpoint ''{0}''"
   DEBUG-INIT-002: "Le dossier ''{0}'' n''a pas été initialisé"
   DEBUG-REGEX-001: "La regex ''{0}'' a été trouvée"
+  DEBUG-REGEX-002: "Remplacement de ''{0}'' par ''{1}'' dans le string ''{2}''"

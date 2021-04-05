@@ -7,8 +7,8 @@ import me.vcouturier.bouchon.regex.model.ITypeRegex;
 @Getter
 @AllArgsConstructor
 public enum TypeRegex implements ITypeRegex {
-    STRING("string", "\\w+?"),
-    NUMBER("number", "\\d+?"),
+    STRING("string", "\\\\w+"),
+    NUMBER("number", "\\\\d+"),
     BOOLEAN("boolean", "true|false")
     ;
 

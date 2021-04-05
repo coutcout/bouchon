@@ -17,12 +17,14 @@ import me.vcouturier.bouchon.services.MessageService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,7 +65,7 @@ public class EndPointServiceImpl implements EndPointService {
                 validateEndpoint(e);
 
                 // Creation real regex
-                //String urlRegex =
+                e.setUrlRegex(regexService.getRegexFormatedString(e.getUrlTemplate(), e.getMapParameters()));
 
                 // Caching endpoints
                 mapEndpoint.put(e.getName(), e);
@@ -128,7 +130,19 @@ public class EndPointServiceImpl implements EndPointService {
     }
 
     @Override
-    public Optional<EndPoint> getEndPointCalled(String endpoint) {
-        return Optional.ofNullable(mapEndpoint.get(endpoint));
+    public Optional<EndPoint> getEndPointCalled(String endpoint) throws ApplicationException {
+        List<EndPoint> availableEndpoints = mapEndpoint.values().stream()
+                .filter(endPoint -> endpoint.matches(endPoint.getUrlRegex()))
+                .collect(Collectors.toList());
+
+        if(availableEndpoints.size() == 1){
+            return Optional.of(availableEndpoints.iterator().next());
+        } else if(availableEndpoints.isEmpty()){
+            log.warn(messageService.formatMessage(MessageEnum.ENDPOINT_NOT_FOUND, endpoint));
+        } else {
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.ENDPOINT_NOT_UNIQUE, availableEndpoints.stream().map(EndPoint::getName).collect(Collectors.joining()));
+        }
+
+        return Optional.empty();
     }
 }
