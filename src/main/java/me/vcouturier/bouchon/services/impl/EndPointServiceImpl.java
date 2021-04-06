@@ -151,7 +151,6 @@ public class EndPointServiceImpl implements EndPointService {
         return Optional.empty();
     }
 
-    @Override
     public Map<String, String> getRequestParameters(String request, EndPoint endPointCalled) throws ApplicationException {
         Pattern pattern = Pattern.compile(endPointCalled.getUrlRegex());
         Matcher matcher = pattern.matcher(request);
@@ -162,5 +161,17 @@ public class EndPointServiceImpl implements EndPointService {
         } else {
             throw applicationExceptionFactory.createApplicationException(MessageEnum.REQUEST_MISFORMATED, request, endPointCalled.getUrlRegex());
         }
+    }
+
+    @Override
+    public String runEndpoint(EndPoint endPoint, String request){
+        try{
+            Map<String, String> requestParameters = getRequestParameters(request, endPoint);
+            return fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
+        } catch (ApplicationException exception){
+            log.error(exception.getMessage());
+        }
+
+        return "KO";
     }
 }

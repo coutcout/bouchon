@@ -20,3 +20,5 @@ bouchon.messages:
   DEBUG-INIT-002: "Le dossier ''{0}'' n''a pas été initialisé"
   DEBUG-REGEX-001: "La regex ''{0}'' a été trouvée"
   DEBUG-REGEX-002: "Remplacement de ''{0}'' par ''{1}'' dans le string ''{2}''"
+
+  DEBUG-FILE-001: "Remplacement de ''{0}'' par ''{1}'' dans le template de fichier ''{2}''"

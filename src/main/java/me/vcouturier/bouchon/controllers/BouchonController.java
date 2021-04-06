@@ -44,8 +44,6 @@ public class BouchonController {
         EndPoint e = endPointService.getEndPointCalled(finalEndpoint)
                                         .orElseThrow(() -> applicationExceptionFactory.createApplicationException(MessageEnum.ERR_INVALID_ENDPOINT));
 
-        Map<String, String> params = endPointService.getRequestParameters(finalEndpoint, e);
-
-        return "OK";
+        return endPointService.runEndpoint(e, finalEndpoint);
     }
 }

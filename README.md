@@ -15,7 +15,7 @@
     
 * Appel d'un endpoint (GET)
     * ~~Parsing de l'url à partir de la regex pour récupérer les paramètres~~
-    * Génération du nom du fichier recherché
+    * ~~Génération du nom du fichier recherché~~
     * Récupération du fichier
     * Renvoi du fichier
   
