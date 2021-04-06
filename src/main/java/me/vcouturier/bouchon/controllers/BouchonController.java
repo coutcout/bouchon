@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 public class BouchonController {
@@ -40,8 +41,11 @@ public class BouchonController {
             finalEndpoint = endpoint;
         }
 
-        return endPointService.getEndPointCalled(finalEndpoint)
-                .map(EndPoint::getName)
-                .orElseThrow(() -> applicationExceptionFactory.createApplicationException(MessageEnum.ERR_INVALID_ENDPOINT));
+        EndPoint e = endPointService.getEndPointCalled(finalEndpoint)
+                                        .orElseThrow(() -> applicationExceptionFactory.createApplicationException(MessageEnum.ERR_INVALID_ENDPOINT));
+
+        Map<String, String> params = endPointService.getRequestParameters(finalEndpoint, e);
+
+        return "OK";
     }
 }

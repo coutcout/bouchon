@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.vcouturier.bouchon.regex.model.CustomTypeRegex;
 import me.vcouturier.bouchon.regex.model.ITypeRegex;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,4 +23,5 @@ public class EndPoint {
     // From initialization
     private Map<String, ITypeRegex> mapParameters = new HashMap<>();
     private String urlRegex;
+    private List<String> paramsAvailable = new ArrayList<>();
 }

@@ -13,15 +13,6 @@ bouchon:
       folderName: folder2
       urlTemplate: url2
       fileTemplate: file2{blabl}
-    - name: test3
-      folderName: folder3
-      urlTemplate: url1{numberA}{title}
-      fileTemplate: file1{numberA}{title}
-      parameters:
-        - tag: numberA
-          type: number
-        - tag: title
-          type: string
   test: test
   folder:
     data: "path_to_data_folder"

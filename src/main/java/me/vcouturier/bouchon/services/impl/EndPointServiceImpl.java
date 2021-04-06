@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -62,7 +65,7 @@ public class EndPointServiceImpl implements EndPointService {
                 initializeParametersMap(e);
 
                 // Validation of the endpoint parameters
-                validateEndpoint(e);
+                e.getParamsAvailable().addAll(validateEndpoint(e));
 
                 // Creation real regex
                 e.setUrlRegex(regexService.getRegexFormatedString(e.getUrlTemplate(), e.getMapParameters()));
@@ -76,7 +79,7 @@ public class EndPointServiceImpl implements EndPointService {
         }
     }
 
-    private void validateEndpoint(EndPoint e) throws ApplicationException {
+    private List<String> validateEndpoint(EndPoint e) throws ApplicationException {
         // URL Verification
         List<String> urlRegex = verifyStringTemplate(e.getUrlTemplate(), e.getMapParameters());
 
@@ -85,6 +88,8 @@ public class EndPointServiceImpl implements EndPointService {
 
         // Comparing both file and url regex
         verifyTemplatesCompatibility(urlRegex, fileRegex);
+
+        return urlRegex;
     }
 
     private void verifyTemplatesCompatibility(List<String> urlRegex, List<String> fileRegex) throws ApplicationException {
@@ -144,5 +149,18 @@ public class EndPointServiceImpl implements EndPointService {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public Map<String, String> getRequestParameters(String request, EndPoint endPointCalled) throws ApplicationException {
+        Pattern pattern = Pattern.compile(endPointCalled.getUrlRegex());
+        Matcher matcher = pattern.matcher(request);
+        if(matcher.find()){
+            return endPointCalled.getParamsAvailable()
+                    .stream()
+                    .collect(Collectors.toMap(p -> p, matcher::group));
+        } else {
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.REQUEST_MISFORMATED, request, endPointCalled.getUrlRegex());
+        }
     }
 }

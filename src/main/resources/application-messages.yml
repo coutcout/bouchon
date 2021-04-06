@@ -13,6 +13,7 @@ bouchon.messages:
   # Réception d'une requête
   ENDPOINT-001: "Plusieurs endpoints peuvent correspondre à la demande: {0}"
   ENDPOINT-002: "Aucun endpoint n''a été trouvé pour la recherche ''{0}''"
+  REQUEST-001: "La requête '{0}' ne correspond pas au endpoint '{1}'"
 
   # Debug
   DEBUG-INIT-001: "Enregistrement du endpoint ''{0}''"
