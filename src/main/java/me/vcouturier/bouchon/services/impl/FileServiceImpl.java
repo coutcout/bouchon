@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -51,5 +52,20 @@ public class FileServiceImpl implements FileService {
         }
 
         return res;
+    }
+
+    @Override
+    public Path getFilePath(String endpointFolder, String fileName) {
+        return Path.of(this.dataFolderPath, endpointFolder, fileName);
+    }
+
+    @Override
+    public String getFileContentToString(Path filePath) throws ApplicationException {
+        try {
+            return Files.readString(filePath);
+        } catch (IOException e) {
+            log.error(messageService.formatMessage(MessageEnum.FILE_ERR_READING, filePath.toString()), e);
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.FILE_ERR_READING, filePath.toString());
+        }
     }
 }

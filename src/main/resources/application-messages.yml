@@ -22,3 +22,5 @@ bouchon.messages:
   DEBUG-REGEX-002: "Remplacement de ''{0}'' par ''{1}'' dans le string ''{2}''"
 
   DEBUG-FILE-001: "Remplacement de ''{0}'' par ''{1}'' dans le template de fichier ''{2}''"
+
+  FILE-READING-001: "Une erreur est survenue pendant la lecture du fichier '{0}'"

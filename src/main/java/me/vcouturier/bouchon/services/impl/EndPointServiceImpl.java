@@ -20,6 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,14 +168,10 @@ public class EndPointServiceImpl implements EndPointService {
     }
 
     @Override
-    public String runEndpoint(EndPoint endPoint, String request){
-        try{
-            Map<String, String> requestParameters = getRequestParameters(request, endPoint);
-            return fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
-        } catch (ApplicationException exception){
-            log.error(exception.getMessage());
-        }
-
-        return "KO";
+    public String runEndpoint(EndPoint endPoint, String request) throws ApplicationException {
+        Map<String, String> requestParameters = getRequestParameters(request, endPoint);
+        String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
+        Path file = fileService.getFilePath(endPoint.getFolderName(), fileName);
+        return fileService.getFileContentToString(file);
     }
 }

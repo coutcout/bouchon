@@ -13,11 +13,11 @@
         * ~~Comparaison des paramètres de l'URL et du Fichier~~
     * ~~Création de la regex de l'url à partir du template de l'url~~
     
-* Appel d'un endpoint (GET)
+* ~~Appel d'un endpoint (GET)~~
     * ~~Parsing de l'url à partir de la regex pour récupérer les paramètres~~
     * ~~Génération du nom du fichier recherché~~
-    * Récupération du fichier
-    * Renvoi du fichier
+    * ~~Récupération du fichier~~
+    * ~~Renvoi du fichier~~
   
 ### 1.0.1
 

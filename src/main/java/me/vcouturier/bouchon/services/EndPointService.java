@@ -10,5 +10,5 @@ public interface EndPointService {
 
     Optional<EndPoint> getEndPointCalled(String endpoint) throws ApplicationException;
 
-    String runEndpoint(EndPoint e, String request);
+    String runEndpoint(EndPoint e, String request) throws ApplicationException;
 }
