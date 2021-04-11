@@ -42,7 +42,7 @@ public class BouchonController {
         }
 
         EndPoint e = endPointService.getEndPointCalled(finalEndpoint)
-                                        .orElseThrow(() -> applicationExceptionFactory.createApplicationException(MessageEnum.ERR_INVALID_ENDPOINT));
+                                        .orElseThrow(() -> applicationExceptionFactory.createEndPointNotFoundException(MessageEnum.ERR_INVALID_ENDPOINT));
 
         return endPointService.runEndpoint(e, finalEndpoint);
     }
