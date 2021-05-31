@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'com.palantir.docker' version '0.26.0'
 }
 
 group = 'me.vcouturier'
@@ -32,6 +33,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+}
+
+
+String imageName = "coutcout/bouchon:$version"
+docker{
+	name imageName
+	files "build/libs/${bootJar.archiveFileName.get()}"
+	buildArgs([JAR_FILE: bootJar.archiveFileName.get()])
 }
 
 test {
