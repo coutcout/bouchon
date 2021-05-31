@@ -14,20 +14,19 @@ import me.vcouturier.bouchon.regex.service.TypeRegexService;
 import me.vcouturier.bouchon.services.EndPointService;
 import me.vcouturier.bouchon.services.FileService;
 import me.vcouturier.bouchon.services.MessageService;
+import me.vcouturier.bouchon.yaml.constructors.ListConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,26 +59,29 @@ public class EndPointServiceImpl implements EndPointService {
     @PostConstruct
     private void init() {
         for(EndPoint e: properties.getEndpoints()){
-            log.debug(messageService.formatMessage(MessageEnum.DEBUG_ENDPOINT_CREATION, e.getName()));
-            try {
-                // Folder initialization
-                initializeFolder(e);
+            intializeEndpoint(e);
+        }
+    }
 
-                // parameters map initialization
-                initializeParametersMap(e);
+    private void intializeEndpoint(EndPoint e) {
+        log.debug(messageService.formatMessage(MessageEnum.DEBUG_ENDPOINT_CREATION, e.getName()));
+        try {
+            // Folder initialization
+            initializeFolder(e);
 
-                // Validation of the endpoint parameters
-                e.getParamsAvailable().addAll(validateEndpoint(e));
+            // parameters map initialization
+            initializeParametersMap(e);
 
-                // Creation real regex
-                e.setUrlRegex(regexService.getRegexFormatedString(e.getUrlTemplate(), e.getMapParameters()));
+            // Validation of the endpoint parameters
+            e.getParamsAvailable().addAll(validateEndpoint(e));
 
-                // Caching endpoints
-                mapEndpoint.put(e.getName(), e);
-            } catch (ApplicationException ex) {
-                log.error(messageService.formatMessage(MessageEnum.ERR_ENDPOINT_INIT, e.getName(), ex.getMessage()));
-            }
+            // Creation real regex
+            e.setUrlRegex(regexService.getRegexFormatedString(e.getUrlTemplate(), e.getMapParameters()));
 
+            // Caching endpoints
+            mapEndpoint.put(e.getName(), e);
+        } catch (ApplicationException ex) {
+            log.error(messageService.formatMessage(MessageEnum.ERR_ENDPOINT_INIT, e.getName(), ex.getMessage()));
         }
     }
 
@@ -173,5 +175,21 @@ public class EndPointServiceImpl implements EndPointService {
         String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
         Path file = fileService.getFilePath(endPoint.getFolderName(), fileName);
         return fileService.getFileContentToString(file);
+    }
+
+    @Override
+    public List<EndPoint> loadEndpointsFromFile(MultipartFile endpointFile) throws IOException {
+        List<EndPoint> endpoints = new ArrayList<>();
+
+        try(InputStream inputStream = endpointFile.getInputStream()){
+            Yaml yamlParser = new Yaml(new ListConstructor<>(EndPoint.class));
+            endpoints = yamlParser.load(inputStream);
+        }
+
+        for(EndPoint endPoint : endpoints){
+            intializeEndpoint(endPoint);
+        }
+
+        return endpoints;
     }
 }

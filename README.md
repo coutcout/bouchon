@@ -19,16 +19,33 @@
     * ~~Récupération du fichier~~
     * ~~Renvoi du fichier~~
   
+* Chargement d'endpoints à partir de fichiers yaml dans un dossier
+    * Paramétrage du dossier
+    * Lecture du dossier
+    * Chargement d'un fichier
+    * Vérification du fichier
+    * ~~Parsing des endpoints~~
+    * ~~Chargement des endpoints~~
+    * Chargement des fichiers au démarrage
+  
+* Création d'un service de manipulation des fichiers d'endpoints
+    * Service qui liste les fichiers disponibles
+    * Service qui supprime un fichier
+    * Service qui envoie un fichier
+      * ~~Possibilité d'envoyer plusieurs fichiers~~
+      * ~~Lecture du fichier~~
+    * Service qui recharge les endpoints à partir du dossier de configuration
+  
+* Retrait de la création des endpoints via le fichier de propriétés
+
+* ~~Dockerisation de l'application~~
+  * ~~Création du dockerfile~~
+  * ~~Publication de l'image~~
+  
 ### 1.0.1
 
 * Création des TUs
 
-### 1.1.0
-
-* Dockerisation de l'application
-  * Création du dockerfile
-  * Publication de l'image
-  
 ### 1.2.0
 
 * Implémation d'un CI/CD

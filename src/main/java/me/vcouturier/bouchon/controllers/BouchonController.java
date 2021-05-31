@@ -1,26 +1,31 @@
 package me.vcouturier.bouchon.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.model.EndPoint;
 import me.vcouturier.bouchon.services.EndPointService;
+import me.vcouturier.bouchon.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class BouchonController {
 
     @Autowired
     private ApplicationExceptionFactory applicationExceptionFactory;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private EndPointService endPointService;
@@ -45,5 +50,17 @@ public class BouchonController {
                                         .orElseThrow(() -> applicationExceptionFactory.createEndPointNotFoundException(MessageEnum.ERR_INVALID_ENDPOINT));
 
         return endPointService.runEndpoint(e, finalEndpoint);
+    }
+
+    @RequestMapping(value = "/config/endpoint/upload", method = RequestMethod.POST)
+    public String loadEndpoints(
+            @RequestParam("files") MultipartFile[] files
+    ) throws IOException {
+        for(MultipartFile file : files){
+            log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_UPLOAD, file.getName()));
+            endPointService.loadEndpointsFromFile(file);
+        }
+
+        return "ok";
     }
 }

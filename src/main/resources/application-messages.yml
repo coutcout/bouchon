@@ -24,3 +24,6 @@ bouchon.messages:
   DEBUG-FILE-001: "Remplacement de ''{0}'' par ''{1}'' dans le template de fichier ''{2}''"
 
   FILE-READING-001: "Une erreur est survenue pendant la lecture du fichier '{0}'"
+
+  # Configuration des endpoints
+  CONFIG-ENDPOINT-UPLOAD: "Traitement du fichier de endpoints ''{0}''"
