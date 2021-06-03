@@ -20,10 +20,10 @@
     * ~~Renvoi du fichier~~
   
 * Chargement d'endpoints à partir de fichiers yaml dans un dossier
-    * Paramétrage du dossier
+    * ~~Paramétrage du dossier~~
     * Lecture du dossier
     * Chargement d'un fichier
-    * Vérification du fichier
+    * ~~Vérification du fichier~~
     * ~~Parsing des endpoints~~
     * ~~Chargement des endpoints~~
     * Chargement des fichiers au démarrage

@@ -16,3 +16,4 @@ bouchon:
   test: test
   folder:
     data: "path_to_data_folder"
+    config: "path_to_config_folder"

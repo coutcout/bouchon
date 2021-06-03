@@ -26,4 +26,5 @@ bouchon.messages:
   FILE-READING-001: "Une erreur est survenue pendant la lecture du fichier '{0}'"
 
   # Configuration des endpoints
-  CONFIG-ENDPOINT-UPLOAD: "Traitement du fichier de endpoints ''{0}''"
+  CONFIG-ENDPOINT-LOADING: "Traitement du fichier de endpoints ''{0}''"
+  CONFIG-ENDPOINT-FILE-UPLOAD-EXTENSION-ERROR: "L''extension du fichier doit être parmis la liste suivante: {0}"

@@ -52,15 +52,4 @@ public class BouchonController {
         return endPointService.runEndpoint(e, finalEndpoint);
     }
 
-    @RequestMapping(value = "/config/endpoint/upload", method = RequestMethod.POST)
-    public String loadEndpoints(
-            @RequestParam("files") MultipartFile[] files
-    ) throws IOException {
-        for(MultipartFile file : files){
-            log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_UPLOAD, file.getName()));
-            endPointService.loadEndpointsFromFile(file);
-        }
-
-        return "ok";
-    }
 }
