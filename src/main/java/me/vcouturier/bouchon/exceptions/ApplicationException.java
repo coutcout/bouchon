@@ -16,4 +16,10 @@ public class ApplicationException extends Exception{
         return ("[" + errorCode + "] " + errorMessage);
     }
 
+    public ApplicationException(Throwable exception, String errorCode, String errorMessage){
+        super(exception);
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+    }
+
 }

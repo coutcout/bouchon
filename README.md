@@ -31,10 +31,11 @@
 * Création d'un service de manipulation des fichiers d'endpoints
     * Service qui liste les fichiers disponibles
     * Service qui supprime un fichier
-    * Service qui envoie un fichier
+    * ~~Service qui envoie un fichier~~
       * ~~Possibilité d'envoyer plusieurs fichiers~~
       * ~~Lecture du fichier~~
     * Service qui recharge les endpoints à partir du dossier de configuration
+    * Service qui désactive un fichier de endpoint
   
 * Retrait de la création des endpoints via le fichier de propriétés
 
@@ -52,7 +53,7 @@
 
 ### 1.3.0
 
-* Service de dépot d'un fichier
+* Service de dépot d'un fichier de données
     * Déposer un fichier dans le dossier du endpoint
     * Ecrasement du fichier si déjà existant
     * Création de la regex du nom de fichier à partir du template du fichier
@@ -61,7 +62,7 @@
 
 ### 1.4.0
 
-* Service de suppression d'un fichier
+* Service de suppression d'un fichier de données
     * Suppression du fichier dans le bon endpoint
     * Gestion des erreur
   

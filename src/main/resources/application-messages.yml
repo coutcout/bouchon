@@ -27,4 +27,11 @@ bouchon.messages:
 
   # Configuration des endpoints
   CONFIG-ENDPOINT-LOADING: "Traitement du fichier de endpoints ''{0}''"
+  CONFIG-ENDPOINT-UPLOADING: "Upload du fichier de endpoints ''{0}'' avec comme nom de destination ''{1}''"
+  CONFIG-ENDPOINT-UPLOADING-FILENAME-ALREADY-TAKEN: "Le nom de destination ''{0}'' est déjà pris, on essaie un nouveau"
+  CONFIG-ENDPOINT-UPLOADING-ERROR: "Une erreur est survenue pendant l''import du fichier ''{0}''"
+  CONFIG-ENDPOINT-UPLOADING-VERIFICATION: "Verification du fichier ''{0}''"
+  CONFIG-ENDPOINT-UPLOADING-VERIFICATION-ERROR: "La vérification suivante est en erreur: {0}"
+  CONFIG-ENDPOINT-UPLOADING-VERIFICATION-FAILED: "Le fichier ''{0}'' n'est pas valide pour les raisons suivantes: {1}"
   CONFIG-ENDPOINT-FILE-UPLOAD-EXTENSION-ERROR: "L''extension du fichier doit être parmis la liste suivante: {0}"
+  CONFIG-FOLDER-NOT-EXISTS: "Le dossier de configuration ''{0}'' n'existe pas"

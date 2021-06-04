@@ -24,8 +24,16 @@ public class ApplicationExceptionFactory {
         return new ApplicationException(error.getCode(), this.getMessage(error));
     }
 
+    public ApplicationException createApplicationException(Throwable exception, MessageEnum error){
+        return new ApplicationException(exception, error.getCode(), this.getMessage(error));
+    }
+
     public ApplicationException createApplicationException(MessageEnum error, String... variables){
         return new ApplicationException(error.getCode(), MessageFormat.format(this.getMessage(error), (Object[]) variables));
+    }
+
+    public ApplicationException createApplicationException(Throwable exception, MessageEnum error, String... variables){
+        return new ApplicationException(exception, error.getCode(), MessageFormat.format(this.getMessage(error), (Object[]) variables));
     }
 
     public ApplicationException createEndPointNotFoundException(MessageEnum error){
