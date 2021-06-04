@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,7 +29,10 @@ import java.util.List;
 @Component
 public class ConfigServiceImpl implements ConfigService {
 
-    public static final String FILENAME_TEMPLATE = "{0}_{1}_config{2}.yaml";
+
+    public static final String FILENAME_DEFAULT_EXT = "yaml";
+    public static final String FILENAME_TEMPLATE = "{0}_{1}_config{2}." + FILENAME_DEFAULT_EXT;
+
     private final List<String> YAML_EXTENSION = Arrays.asList("yml", "yaml");
 
     @Autowired
@@ -39,6 +43,16 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Value("${bouchon.folder.config}")
     private String uploadDir;
+
+    private File uploadDirFile;
+
+    @PostConstruct
+    public void init() throws ApplicationException {
+        this.uploadDirFile = new File(this.uploadDir);
+        if(!this.uploadDirFile.exists() || !this.uploadDirFile.isDirectory()){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_FOLDER_NOT_EXISTS, uploadDir);
+        }
+    }
 
     @Override
     public List<String> verifyUploadedFile(MultipartFile file){
@@ -55,23 +69,17 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public File uploadFile(MultipartFile file, String configName) throws ApplicationException {
+    public File uploadEndpointConfigurationFile(MultipartFile file, String configName) throws ApplicationException {
         log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_UPLOADING, file.getOriginalFilename(), configName));
         List<String> errors = this.verifyUploadedFile(file);
         if(CollectionUtils.isEmpty(errors)){
-            File uploadDirFolder = new File(this.uploadDir);
-            if(uploadDirFolder.exists() && uploadDirFolder.isDirectory()){
-                File newFile = getFirstFilenameAvailable(configName);
-                try{
-                    file.transferTo(newFile);
-                } catch (IOException exception){
-                    throw applicationExceptionFactory.createApplicationException(exception, MessageEnum.CONFIG_ENDPOINT_UPLOADING_ERROR, file.getOriginalFilename());
-                }
-
-                return newFile;
-            } else {
-                throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_FOLDER_NOT_EXISTS, uploadDir);
+            File newFile = getFirstFilenameAvailable(configName);
+            try{
+                file.transferTo(newFile);
+            } catch (IOException exception){
+                throw applicationExceptionFactory.createApplicationException(exception, MessageEnum.CONFIG_ENDPOINT_UPLOADING_ERROR, file.getOriginalFilename());
             }
+            return newFile;
         } else {
             throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_UPLOADING_VERIFICATION_FAILED, StringUtils.join(errors));
         }
@@ -90,5 +98,19 @@ public class ConfigServiceImpl implements ConfigService {
             newFile = Path.of(uploadDir, filename).toFile();
         }
         return newFile;
+    }
+
+    @Override
+    public void deleteEndpointConfigurationFile(String filename) throws ApplicationException {
+        log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE, filename));
+        String extension = FilenameUtils.getExtension(filename);
+        Path pathToDelete = StringUtils.isNotEmpty(extension) ? Path.of(uploadDir, filename) : Path.of(uploadDir, filename + "." + FILENAME_DEFAULT_EXT);
+        File fileToDelete = pathToDelete.toFile();
+        if(fileToDelete.exists() && fileToDelete.isFile()){
+            fileToDelete.delete();
+            log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_DELETED, filename));
+        } else {
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_NOT_FOUND, pathToDelete.toString());
+        }
     }
 }

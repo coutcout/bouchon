@@ -11,5 +11,7 @@ public interface ConfigService {
 
     List<String> verifyUploadedFile(MultipartFile file);
 
-    File uploadFile(MultipartFile file, String configName) throws ApplicationException;
+    File uploadEndpointConfigurationFile(MultipartFile file, String configName) throws ApplicationException;
+
+    void deleteEndpointConfigurationFile(String filename) throws ApplicationException;
 }

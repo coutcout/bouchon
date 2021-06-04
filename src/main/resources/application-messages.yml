@@ -35,3 +35,6 @@ bouchon.messages:
   CONFIG-ENDPOINT-UPLOADING-VERIFICATION-FAILED: "Le fichier ''{0}'' n'est pas valide pour les raisons suivantes: {1}"
   CONFIG-ENDPOINT-FILE-UPLOAD-EXTENSION-ERROR: "L''extension du fichier doit être parmis la liste suivante: {0}"
   CONFIG-FOLDER-NOT-EXISTS: "Le dossier de configuration ''{0}'' n'existe pas"
+  CONFIG-ENDPOINT-DELETE: "Suppression du fichier ''{0}'' en cours"
+  CONFIG-ENDPOINT-DELETE-FILE-NOT-FOUND: "Impossible de supprimer le fichier ''{0}'' car il n''existe pas"
+  CONFIG-ENDPOINT-DELETE-FILE-DELETED: "Fichier ''{0}'' supprimé"
