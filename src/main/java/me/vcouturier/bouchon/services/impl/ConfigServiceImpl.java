@@ -113,4 +113,10 @@ public class ConfigServiceImpl implements ConfigService {
             throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_NOT_FOUND, pathToDelete.toString());
         }
     }
+
+    @Override
+    public List<String> getAllConfigurationFiles() {
+        String[] files = this.uploadDirFile.list();
+        return files != null ? Arrays.asList(files) : new ArrayList<>();
+    }
 }

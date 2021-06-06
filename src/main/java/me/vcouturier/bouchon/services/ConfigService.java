@@ -14,4 +14,6 @@ public interface ConfigService {
     File uploadEndpointConfigurationFile(MultipartFile file, String configName) throws ApplicationException;
 
     void deleteEndpointConfigurationFile(String filename) throws ApplicationException;
+
+    List<String> getAllConfigurationFiles();
 }

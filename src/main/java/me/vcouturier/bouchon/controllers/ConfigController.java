@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping(path = "/config")
@@ -35,4 +37,10 @@ public class ConfigController {
     ) throws ApplicationException {
         configService.deleteEndpointConfigurationFile(configFileName);
     }
+
+    @RequestMapping(path="/endpoint", method = RequestMethod.GET)
+    public List<String> getListConfigurationFile(){
+        return configService.getAllConfigurationFiles();
+    }
+
 }
