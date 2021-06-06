@@ -5,6 +5,8 @@ import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.services.ConfigService;
 import me.vcouturier.bouchon.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,10 +34,14 @@ public class ConfigController {
     }
 
     @RequestMapping(path="/endpoint/{configFileName}", method = RequestMethod.DELETE)
-    public void deleteEndpointConfiguration(
+    public ResponseEntity<Object> deleteEndpointConfiguration(
             @PathVariable("configFileName") String configFileName
     ) throws ApplicationException {
-        configService.deleteEndpointConfigurationFile(configFileName);
+        if(configService.deleteEndpointConfigurationFile(configFileName)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(path="/endpoint", method = RequestMethod.GET)

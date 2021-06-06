@@ -101,17 +101,25 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public void deleteEndpointConfigurationFile(String filename) throws ApplicationException {
+    public Boolean deleteEndpointConfigurationFile(String filename) throws ApplicationException {
         log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE, filename));
         String extension = FilenameUtils.getExtension(filename);
         Path pathToDelete = StringUtils.isNotEmpty(extension) ? Path.of(uploadDir, filename) : Path.of(uploadDir, filename + "." + FILENAME_DEFAULT_EXT);
         File fileToDelete = pathToDelete.toFile();
+
+        boolean fileDeleted;
         if(fileToDelete.exists() && fileToDelete.isFile()){
-            fileToDelete.delete();
-            log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_DELETED, filename));
+            fileDeleted = fileToDelete.delete();
+            if(fileDeleted) {
+                log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_DELETED, filename));
+            } else {
+                log.warn(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_NOT_DELETED, filename));
+            }
         } else {
             throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_NOT_FOUND, pathToDelete.toString());
         }
+
+        return fileDeleted;
     }
 
     @Override

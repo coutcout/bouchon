@@ -38,3 +38,4 @@ bouchon.messages:
   CONFIG-ENDPOINT-DELETE: "Suppression du fichier ''{0}'' en cours"
   CONFIG-ENDPOINT-DELETE-FILE-NOT-FOUND: "Impossible de supprimer le fichier ''{0}'' car il n''existe pas"
   CONFIG-ENDPOINT-DELETE-FILE-DELETED: "Fichier ''{0}'' supprimé"
+  CONFIG-ENDPOINT-DELETE-FILE-NOT-DELETED: "Fichier ''{0}'' non supprimé"
