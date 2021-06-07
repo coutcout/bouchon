@@ -1,6 +1,7 @@
 package me.vcouturier.bouchon.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import me.vcouturier.bouchon.enums.EndpointStatut;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
@@ -16,10 +17,10 @@ import me.vcouturier.bouchon.yaml.constructors.ListConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -49,9 +50,12 @@ public class EndPointServiceImpl implements EndPointService {
 
     private final Map<String, EndPoint> mapEndpoint = new HashMap<>();
 
-    private void intializeEndpoint(EndPoint e) {
+    private Optional<String> initializeEndpoint(EndPoint e) {
         log.debug(messageService.formatMessage(MessageEnum.DEBUG_ENDPOINT_CREATION, e.getName()));
         try {
+            // Does the endpoint already exists ?
+            verifyDoubles(e);
+
             // Folder initialization
             initializeFolder(e);
 
@@ -67,7 +71,17 @@ public class EndPointServiceImpl implements EndPointService {
             // Caching endpoints
             mapEndpoint.put(e.getName(), e);
         } catch (ApplicationException ex) {
-            log.error(messageService.formatMessage(MessageEnum.ERR_ENDPOINT_INIT, e.getName(), ex.getMessage()));
+            String message = messageService.formatMessage(MessageEnum.ERR_ENDPOINT_INIT, e.getName(), ex.getMessage());
+            log.error(message);
+            return Optional.of(ex.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+    private void verifyDoubles(EndPoint e) throws ApplicationException {
+        if(this.mapEndpoint.containsKey(e.getName())){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.INIT_ENDPOINT_ALREADY_EXISTS, e.getName());
         }
     }
 
@@ -164,18 +178,25 @@ public class EndPointServiceImpl implements EndPointService {
     }
 
     @Override
-    public List<EndPoint> loadEndpointsFromFile(MultipartFile endpointFile) throws IOException {
-        List<EndPoint> endpoints = new ArrayList<>();
+    public Map<EndPoint, Optional<String>> loadEndpointsFromFile(File endpointFile) throws IOException {
+        Map<EndPoint, Optional<String>> endpointsStatut = new HashMap<>();
 
-        try(InputStream inputStream = endpointFile.getInputStream()){
+        log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_LOADING, endpointFile.getName()));
+        List<EndPoint> endpoints = new ArrayList<>();
+        try(InputStream inputStream = new FileInputStream(endpointFile)){
             Yaml yamlParser = new Yaml(new ListConstructor<>(EndPoint.class));
             endpoints = yamlParser.load(inputStream);
         }
 
         for(EndPoint endPoint : endpoints){
-            intializeEndpoint(endPoint);
+            endpointsStatut.put(endPoint, initializeEndpoint(endPoint));
         }
 
-        return endpoints;
+        return endpointsStatut;
+    }
+
+    @Override
+    public void reinitializeEndpoints(){
+        this.mapEndpoint.clear();
     }
 }

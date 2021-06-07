@@ -1,9 +1,11 @@
 package me.vcouturier.bouchon.services;
 
 import me.vcouturier.bouchon.exceptions.ApplicationException;
+import me.vcouturier.bouchon.model.EndpointStatutResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public interface ConfigService {
@@ -15,4 +17,6 @@ public interface ConfigService {
     Boolean deleteEndpointConfigurationFile(String filename) throws ApplicationException;
 
     List<String> getAllConfigurationFiles();
+
+    List<EndpointStatutResponse> reloadAllConfigurationFiles() throws IOException;
 }

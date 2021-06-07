@@ -1,10 +1,14 @@
 package me.vcouturier.bouchon.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import me.vcouturier.bouchon.enums.EndpointStatut;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
+import me.vcouturier.bouchon.model.EndPoint;
+import me.vcouturier.bouchon.model.EndpointStatutResponse;
 import me.vcouturier.bouchon.services.ConfigService;
+import me.vcouturier.bouchon.services.EndPointService;
 import me.vcouturier.bouchon.services.MessageService;
 import me.vcouturier.bouchon.utils.DateUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,9 +25,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -41,16 +44,19 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ApplicationExceptionFactory applicationExceptionFactory;
 
+    @Autowired
+    private EndPointService endPointService;
+
     @Value("${bouchon.folder.config}")
     private String uploadDir;
 
     private File uploadDirFile;
 
     @PostConstruct
-    public void init() throws ApplicationException {
+    public void init() {
         this.uploadDirFile = new File(this.uploadDir);
         if(!this.uploadDirFile.exists() || !this.uploadDirFile.isDirectory()){
-            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_FOLDER_NOT_EXISTS, uploadDir);
+            throw applicationExceptionFactory.createApplicationRuntimeException(MessageEnum.CONFIG_FOLDER_NOT_EXISTS, uploadDir);
         }
     }
 
@@ -126,5 +132,37 @@ public class ConfigServiceImpl implements ConfigService {
     public List<String> getAllConfigurationFiles() {
         String[] files = this.uploadDirFile.list();
         return files != null ? Arrays.asList(files) : new ArrayList<>();
+    }
+
+    @Override
+    public List<EndpointStatutResponse> reloadAllConfigurationFiles() throws IOException {
+        List<EndpointStatutResponse> endpoints = new ArrayList<>();
+        log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_COMPLETE_RELOAD));
+
+        endPointService.reinitializeEndpoints();
+
+        File[] filesArray = this.uploadDirFile.listFiles();
+        List<File> files =  filesArray == null ? new ArrayList<>() : Arrays.asList(filesArray);
+        for(File file: files){
+            if(file.exists()
+                && file.isFile()
+                && file.canRead()
+            ){
+                endpoints.addAll(
+                        endPointService.loadEndpointsFromFile(file).entrySet().stream()
+                            .map(entry -> new EndpointStatutResponse(
+                                    file.getName(),
+                                    entry.getKey().getName(),
+                                    entry.getValue().isEmpty() ? EndpointStatut.OK : EndpointStatut.KO,
+                                    entry.getValue().orElse(null)))
+                            .sorted(Comparator.comparing(EndpointStatutResponse::getFilename)
+                                            .thenComparing(EndpointStatutResponse::getEndpointName)
+                                            .thenComparing(EndpointStatutResponse::getStatut))
+                            .collect(Collectors.toList())
+                        );
+            }
+        }
+
+        return endpoints;
     }
 }

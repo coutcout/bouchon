@@ -7,6 +7,7 @@ bouchon.messages:
   ERR-INIT-005: "L''URL requiert une regex d''un type ''{0}'' qui n''existe pas"
   ERR-INIT-006: "L''URL possède plusieurs fois la regex ''{0}''"
   ERR-INIT-007: "L''URL et le fichier ne requierent pas les mêmes regex"
+  INIT-ENDPOINT-ALREADY-EXISTS: "Le endpoint avec le nom ''{0}'' existe déjà"
 
   ERR-MSG-001: "Le message ''{0}'' n''existe pas"
 
@@ -16,7 +17,7 @@ bouchon.messages:
   REQUEST-001: "La requête '{0}' ne correspond pas au endpoint '{1}'"
 
   # Debug
-  DEBUG-INIT-001: "Enregistrement du endpoint ''{0}''"
+  ENDPOINT-LOADING: "Enregistrement du endpoint ''{0}''"
   DEBUG-INIT-002: "Le dossier ''{0}'' n''a pas été initialisé"
   DEBUG-REGEX-001: "La regex ''{0}'' a été trouvée"
   DEBUG-REGEX-002: "Remplacement de ''{0}'' par ''{1}'' dans le string ''{2}''"
@@ -27,6 +28,7 @@ bouchon.messages:
 
   # Configuration des endpoints
   CONFIG-ENDPOINT-LOADING: "Traitement du fichier de endpoints ''{0}''"
+  CONFIG-ENDPOINT-COMPLETE-RELOAD: "Rechargement complet des endpoints"
   CONFIG-ENDPOINT-UPLOADING: "Upload du fichier de endpoints ''{0}'' avec comme nom de destination ''{1}''"
   CONFIG-ENDPOINT-UPLOADING-FILENAME-ALREADY-TAKEN: "Le nom de destination ''{0}'' est déjà pris, on essaie un nouveau"
   CONFIG-ENDPOINT-UPLOADING-ERROR: "Une erreur est survenue pendant l''import du fichier ''{0}''"
@@ -39,3 +41,8 @@ bouchon.messages:
   CONFIG-ENDPOINT-DELETE-FILE-NOT-FOUND: "Impossible de supprimer le fichier ''{0}'' car il n''existe pas"
   CONFIG-ENDPOINT-DELETE-FILE-DELETED: "Fichier ''{0}'' supprimé"
   CONFIG-ENDPOINT-DELETE-FILE-NOT-DELETED: "Fichier ''{0}'' non supprimé"
+
+  # Statut des endpoints
+  ENDPOINT-STATUT-OK: "OK"
+  ENDPOINT-STATUT-KO: "KO"
+
