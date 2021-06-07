@@ -21,8 +21,8 @@
   
 * Chargement d'endpoints à partir de fichiers yaml dans un dossier
     * ~~Paramétrage du dossier~~
-    * Lecture du dossier
-    * Chargement d'un fichier
+    * ~~Lecture du dossier~~
+    * ~~Chargement d'un fichier~~
     * ~~Vérification du fichier~~
     * ~~Parsing des endpoints~~
     * ~~Chargement des endpoints~~
@@ -34,10 +34,10 @@
     * ~~Service qui envoie un fichier~~
       * ~~Possibilité d'envoyer plusieurs fichiers~~
       * ~~Lecture du fichier~~
-    * Service qui recharge les endpoints à partir du dossier de configuration
+    * ~~Service qui recharge les endpoints à partir du dossier de configuration~~
     * Service qui désactive un fichier de endpoint
   
-* Retrait de la création des endpoints via le fichier de propriétés
+* ~~Retrait de la création des endpoints via le fichier de propriétés~~
 
 * ~~Dockerisation de l'application~~
   * ~~Création du dockerfile~~
