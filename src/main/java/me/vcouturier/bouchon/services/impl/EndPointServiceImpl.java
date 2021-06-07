@@ -6,7 +6,6 @@ import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.model.EndPoint;
 import me.vcouturier.bouchon.model.Parameter;
-import me.vcouturier.bouchon.properties.BouchonProperties;
 import me.vcouturier.bouchon.regex.model.ITypeRegex;
 import me.vcouturier.bouchon.regex.service.RegexService;
 import me.vcouturier.bouchon.regex.service.TypeRegexService;
@@ -34,9 +33,6 @@ import java.util.stream.Collectors;
 public class EndPointServiceImpl implements EndPointService {
 
     @Autowired
-    private BouchonProperties properties;
-
-    @Autowired
     private FileService fileService;
 
     @Autowired
@@ -52,13 +48,6 @@ public class EndPointServiceImpl implements EndPointService {
     private MessageService messageService;
 
     private final Map<String, EndPoint> mapEndpoint = new HashMap<>();
-
-    @PostConstruct
-    private void init() {
-        for(EndPoint e: properties.getEndpoints()){
-            intializeEndpoint(e);
-        }
-    }
 
     private void intializeEndpoint(EndPoint e) {
         log.debug(messageService.formatMessage(MessageEnum.DEBUG_ENDPOINT_CREATION, e.getName()));

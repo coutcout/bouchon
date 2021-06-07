@@ -1,19 +1,4 @@
 bouchon:
-  endpoints:
-    - name: test1
-      folderName: folder1
-      urlTemplate: url1{numberA}{title}
-      fileTemplate: file1{numberA}{title}
-      parameters:
-        - tag: numberA
-          type: number
-        - tag: title
-          type: string
-    - name: test2
-      folderName: folder2
-      urlTemplate: url2
-      fileTemplate: file2{blabl}
-  test: test
   folder:
     data: "path_to_data_folder"
     config: "path_to_config_folder"
