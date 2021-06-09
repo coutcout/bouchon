@@ -19,14 +19,16 @@
     * ~~Récupération du fichier~~
     * ~~Renvoi du fichier~~
   
-* Chargement d'endpoints à partir de fichiers yaml dans un dossier
+* ~~Gestions des appels en POST avec paramètres dans le body en JSON~~
+  
+* ~~Chargement d'endpoints à partir de fichiers yaml dans un dossier~~
     * ~~Paramétrage du dossier~~
     * ~~Lecture du dossier~~
     * ~~Chargement d'un fichier~~
     * ~~Vérification du fichier~~
     * ~~Parsing des endpoints~~
     * ~~Chargement des endpoints~~
-    * Chargement des fichiers au démarrage
+    * ~~Chargement des fichiers au démarrage~~
   
 * Création d'un service de manipulation des fichiers d'endpoints
     * ~~Service qui liste les fichiers disponibles~~
