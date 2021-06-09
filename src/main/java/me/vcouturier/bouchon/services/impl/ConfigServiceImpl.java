@@ -53,11 +53,13 @@ public class ConfigServiceImpl implements ConfigService {
     private File uploadDirFile;
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
         this.uploadDirFile = new File(this.uploadDir);
         if(!this.uploadDirFile.exists() || !this.uploadDirFile.isDirectory()){
             throw applicationExceptionFactory.createApplicationRuntimeException(MessageEnum.CONFIG_FOLDER_NOT_EXISTS, uploadDir);
         }
+
+        this.reloadAllConfigurationFiles();
     }
 
     @Override
