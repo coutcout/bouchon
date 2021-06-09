@@ -12,7 +12,9 @@ public interface EndPointService {
 
     Optional<EndPoint> getEndPointCalled(String endpoint) throws ApplicationException;
 
-    String runEndpoint(EndPoint e, String request) throws ApplicationException;
+    String runEndpointGet(EndPoint e, String request) throws ApplicationException;
+
+    String runEndpointPost(EndPoint endPoint, String request, Map<String, String> params) throws ApplicationException;
 
     Map<EndPoint, Optional<String>> loadEndpointsFromFile(File endpointFile) throws IOException;
 

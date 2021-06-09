@@ -1,0 +1,10 @@
+- name: testPost1
+  requestParameterPlace: BODY
+  folderName: folderPost1
+  urlTemplate: urlPost1
+  fileTemplate: file1{numberA}{title}
+  parameters:
+    - tag: numberA
+      type: number
+    - tag: title
+      type: string

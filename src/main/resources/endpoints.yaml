@@ -1,5 +1,6 @@
 - name: test1
   folderName: folder1
+  requestParameterPlace: URL
   urlTemplate: url1{numberA}{title}
   fileTemplate: file1{numberA}{title}
   parameters:
@@ -8,6 +9,8 @@
     - tag: title
       type: string
 - name: test2
+  requestParameterPlace: URL
+  method: get
   folderName: folder2
   urlTemplate: url2
   fileTemplate: file2{blabl}

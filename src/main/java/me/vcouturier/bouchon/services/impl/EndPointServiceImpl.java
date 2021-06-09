@@ -1,7 +1,7 @@
 package me.vcouturier.bouchon.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import me.vcouturier.bouchon.enums.EndpointStatut;
+import me.vcouturier.bouchon.enums.RequestParameterPlace;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
@@ -92,8 +92,10 @@ public class EndPointServiceImpl implements EndPointService {
         // File Template Verification
         List<String> fileRegex = verifyStringTemplate(e.getFileTemplate(), e.getMapParameters());
 
-        // Comparing both file and url regex
-        verifyTemplatesCompatibility(urlRegex, fileRegex);
+        // Comparing both file and url regex when parameters are in URL
+        if(RequestParameterPlace.URL.equals(e.getRequestParameterPlace())){
+            verifyTemplatesCompatibility(urlRegex, fileRegex);
+        }
 
         return urlRegex;
     }
@@ -157,7 +159,7 @@ public class EndPointServiceImpl implements EndPointService {
         return Optional.empty();
     }
 
-    public Map<String, String> getRequestParameters(String request, EndPoint endPointCalled) throws ApplicationException {
+    public Map<String, String> getRequestParametersGet(String request, EndPoint endPointCalled) throws ApplicationException {
         Pattern pattern = Pattern.compile(endPointCalled.getUrlRegex());
         Matcher matcher = pattern.matcher(request);
         if(matcher.find()){
@@ -170,8 +172,16 @@ public class EndPointServiceImpl implements EndPointService {
     }
 
     @Override
-    public String runEndpoint(EndPoint endPoint, String request) throws ApplicationException {
-        Map<String, String> requestParameters = getRequestParameters(request, endPoint);
+    public String runEndpointGet(EndPoint endPoint, String request) throws ApplicationException {
+        Map<String, String> requestParameters = getRequestParametersGet(request, endPoint);
+        String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
+        Path file = fileService.getFilePath(endPoint.getFolderName(), fileName);
+        return fileService.getFileContentToString(file);
+    }
+
+    @Override
+    public String runEndpointPost(EndPoint endPoint, String request, Map<String, String> params) throws ApplicationException {
+        Map<String, String> requestParameters = params;
         String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
         Path file = fileService.getFilePath(endPoint.getFolderName(), fileName);
         return fileService.getFileContentToString(file);
