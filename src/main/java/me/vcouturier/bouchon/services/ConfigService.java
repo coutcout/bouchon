@@ -19,4 +19,6 @@ public interface ConfigService {
     List<String> getAllConfigurationFiles();
 
     List<EndpointStatutResponse> reloadAllConfigurationFiles() throws IOException;
+
+    boolean activationEndpointConfigurationFile(String configFileName, boolean activate) throws ApplicationException;
 }

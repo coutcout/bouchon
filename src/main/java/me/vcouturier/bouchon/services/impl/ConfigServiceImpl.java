@@ -5,7 +5,6 @@ import me.vcouturier.bouchon.enums.EndpointStatut;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
-import me.vcouturier.bouchon.model.EndPoint;
 import me.vcouturier.bouchon.model.EndpointStatutResponse;
 import me.vcouturier.bouchon.services.ConfigService;
 import me.vcouturier.bouchon.services.EndPointService;
@@ -34,6 +33,7 @@ public class ConfigServiceImpl implements ConfigService {
 
 
     public static final String FILENAME_DEFAULT_EXT = "yaml";
+    public static final String FILENAME_DEFAULT_DEACTIVATED_EXT = "deactivated";
     public static final String FILENAME_TEMPLATE = "{0}_{1}_config{2}." + FILENAME_DEFAULT_EXT;
 
     private final List<String> YAML_EXTENSION = Arrays.asList("yml", "yaml");
@@ -98,12 +98,14 @@ public class ConfigServiceImpl implements ConfigService {
         LocalDate date = LocalDate.now();
         String filename = MessageFormat.format(FILENAME_TEMPLATE, date.format(DateUtils.Formats.DATE_FORMAT), configName, StringUtils.EMPTY);
         File newFile = Path.of(uploadDir, filename).toFile();
+        File newFileDeactivated = Path.of(uploadDir, filename + "." + FILENAME_DEFAULT_DEACTIVATED_EXT).toFile();
         int i = 1;
-        while(newFile.exists()) {
+        while(newFile.exists() || newFileDeactivated.exists()) {
             log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_UPLOADING_FILENAME_ALREADY_TAKEN, newFile.getName()));
             String fileIncrement = String.format("_%03d", i++);
             filename = MessageFormat.format(FILENAME_TEMPLATE, date.format(DateUtils.Formats.DATE_FORMAT), configName, fileIncrement);
             newFile = Path.of(uploadDir, filename).toFile();
+            newFileDeactivated = Path.of(uploadDir, filename + "." + FILENAME_DEFAULT_DEACTIVATED_EXT).toFile();
         }
         return newFile;
     }
@@ -111,9 +113,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Boolean deleteEndpointConfigurationFile(String filename) throws ApplicationException {
         log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE, filename));
-        String extension = FilenameUtils.getExtension(filename);
-        Path pathToDelete = StringUtils.isNotEmpty(extension) ? Path.of(uploadDir, filename) : Path.of(uploadDir, filename + "." + FILENAME_DEFAULT_EXT);
-        File fileToDelete = pathToDelete.toFile();
+        File fileToDelete = getFileWithOrWithoutExtension(filename, FILENAME_DEFAULT_EXT);
 
         boolean fileDeleted;
         if(fileToDelete.exists() && fileToDelete.isFile()){
@@ -124,10 +124,16 @@ public class ConfigServiceImpl implements ConfigService {
                 log.warn(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_NOT_DELETED, filename));
             }
         } else {
-            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_NOT_FOUND, pathToDelete.toString());
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_DELETE_FILE_NOT_FOUND, fileToDelete.getName());
         }
 
         return fileDeleted;
+    }
+
+    private File getFileWithOrWithoutExtension(String filename, String defaultExtension) {
+        String extension = FilenameUtils.getExtension(filename);
+        Path pathToDelete = StringUtils.isNotEmpty(extension) ? Path.of(uploadDir, filename) : Path.of(uploadDir, filename + "." + defaultExtension);
+        return pathToDelete.toFile();
     }
 
     @Override
@@ -144,7 +150,7 @@ public class ConfigServiceImpl implements ConfigService {
         endPointService.reinitializeEndpoints();
 
         File[] filesArray = this.uploadDirFile.listFiles();
-        List<File> files =  filesArray == null ? new ArrayList<>() : Arrays.asList(filesArray);
+        List<File> files =  filesArray == null ? new ArrayList<>() : Arrays.stream(filesArray).filter(f -> CollectionUtils.containsAny(YAML_EXTENSION, FilenameUtils.getExtension(f.getName()))).collect(Collectors.toList());
         for(File file: files){
             if(file.exists()
                 && file.isFile()
@@ -166,5 +172,24 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
         return endpoints;
+    }
+
+    @Override
+    public boolean activationEndpointConfigurationFile(String configFileName, boolean activate) throws ApplicationException {
+        log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_ACTIVATION, configFileName));
+        File fileToModify = getFileWithOrWithoutExtension(configFileName, activate ? FILENAME_DEFAULT_EXT + "." + FILENAME_DEFAULT_DEACTIVATED_EXT : FILENAME_DEFAULT_EXT);
+        boolean success;
+
+        if(fileToModify.exists() && fileToModify.isFile()){
+            String filePath = fileToModify.getAbsolutePath();
+            String newFilename = activate ?
+                    filePath.substring(0, filePath.length() - (FILENAME_DEFAULT_DEACTIVATED_EXT.length() + 1)) // +1 because of the '.' to remove too
+                    : filePath + "." + FILENAME_DEFAULT_DEACTIVATED_EXT;
+            success = fileToModify.renameTo(Path.of(newFilename).toFile());
+        } else {
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_ACTIVATION_FILE_NOT_FOUND, fileToModify.getName());
+        }
+
+        return success;
     }
 }

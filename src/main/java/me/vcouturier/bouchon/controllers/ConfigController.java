@@ -49,6 +49,28 @@ public class ConfigController {
         }
     }
 
+    @RequestMapping(path="/endpoint/{configFileName}/deactivate", method = RequestMethod.PUT)
+    public ResponseEntity<Object> deactivateEndpointConfiguration(
+            @PathVariable("configFileName") String configFileName
+    ) throws ApplicationException {
+        if(configService.activationEndpointConfigurationFile(configFileName, false)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(path="/endpoint/{configFileName}/activate", method = RequestMethod.PUT)
+    public ResponseEntity<Object> activateEndpointConfiguration(
+            @PathVariable("configFileName") String configFileName
+    ) throws ApplicationException {
+        if(configService.activationEndpointConfigurationFile(configFileName, true)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(path="/endpoint", method = RequestMethod.GET)
     public List<String> getListConfigurationFile(){
         return configService.getAllConfigurationFiles();

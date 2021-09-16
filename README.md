@@ -37,7 +37,7 @@
       * ~~Possibilité d'envoyer plusieurs fichiers~~
       * ~~Lecture du fichier~~
     * ~~Service qui recharge les endpoints à partir du dossier de configuration~~
-    * Service qui désactive un fichier de endpoint
+    * ~~Service qui désactive un fichier de endpoint~~
   
 * ~~Retrait de la création des endpoints via le fichier de propriétés~~
 
