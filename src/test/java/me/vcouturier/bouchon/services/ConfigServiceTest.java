@@ -571,4 +571,91 @@ public class ConfigServiceTest {
 
         assertThat(endpointsStatut).isEmpty();
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "file",
+            "file.yaml"
+    })
+    public void activationEndpointConfigurationFile_deactivate_ok(String filenameToDeactivate) throws IOException, ApplicationException {
+        // Arrange
+        String filename = "file.yaml";
+        Files.createFile(new File(configFolder, filename).toPath());
+
+        assertThat(new File(configFolder, filename).exists()).isTrue();
+        assertThat(new File(configFolder, filename).isFile()).isTrue();
+        assertThat(new File(configFolder, filename + ".deactivated").exists()).isFalse();
+
+        // Act
+        boolean res = configService.activationEndpointConfigurationFile(filenameToDeactivate, false);
+
+        // Assert
+        assertThat(new File(configFolder, filename).exists()).isFalse();
+        assertThat(new File(configFolder, filename + ".deactivated").exists()).isTrue();
+        assertThat(new File(configFolder, filename + ".deactivated").isFile()).isTrue();
+
+        assertThat(res).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {
+            true,
+            false
+    })
+    public void activationEndpointConfigurationFile_fileNotExists(boolean activate) {
+        // Arrange
+        String filename = "file";
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), Mockito.anyString());
+
+        // Act
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> configService.activationEndpointConfigurationFile(filename, activate));
+
+        // Assert
+        assertThat(exception).isNotNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {
+            true,
+            false
+    })
+    public void activationEndpointConfigurationFile_fileIsDirectory(boolean activate) throws IOException {
+        // Arrange
+        String filename = "file";
+        Files.createDirectory(new File(configFolder, filename + ".yaml" + (activate ? ".deactivated" : StringUtils.EMPTY)).toPath());
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), Mockito.anyString());
+
+        // Act
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> configService.activationEndpointConfigurationFile(filename, activate));
+
+        // Assert
+        assertThat(exception).isNotNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "file",
+            "file.yaml.deactivated"
+    })
+    public void activationEndpointConfigurationFile_activate_ok(String filenameToDeactivate) throws IOException, ApplicationException {
+        // Arrange
+        String filename = "file.yaml";
+        Files.createFile(new File(configFolder, filename + ".deactivated").toPath());
+
+        assertThat(new File(configFolder, filename + ".deactivated").exists()).isTrue();
+        assertThat(new File(configFolder, filename + ".deactivated").isFile()).isTrue();
+        assertThat(new File(configFolder, filename).exists()).isFalse();
+
+        // Act
+        boolean res = configService.activationEndpointConfigurationFile(filenameToDeactivate, true);
+
+        // Assert
+        assertThat(new File(configFolder, filename + ".deactivated").exists()).isFalse();
+        assertThat(new File(configFolder, filename).exists()).isTrue();
+        assertThat(new File(configFolder, filename).isFile()).isTrue();
+
+        assertThat(res).isTrue();
+    }
 }
