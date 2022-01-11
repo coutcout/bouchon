@@ -1,9 +1,12 @@
 package me.vcouturier.bouchon.services;
 
+import me.vcouturier.bouchon.enums.EndpointStatut;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.ApplicationRuntimeException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
+import me.vcouturier.bouchon.model.EndPoint;
+import me.vcouturier.bouchon.model.EndpointStatutResponse;
 import me.vcouturier.bouchon.services.impl.ConfigServiceImpl;
 import me.vcouturier.bouchon.utils.DateUtils;
 import org.apache.commons.io.FileUtils;
@@ -33,10 +36,13 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ThrowableNotThrown")
 @ExtendWith(MockitoExtension.class)
@@ -473,5 +479,96 @@ public class ConfigServiceTest {
             assertThat(existingFiles.size()).isEqualTo(nbFiles);
             assertThat(existingFiles).containsExactlyInAnyOrderElementsOf(fileList);
         }
+    }
+
+    @Test
+    public void reloadAllConfigurationFiles_extensionFilter() throws IOException {
+        // Arrange
+        Path yamlFile = Files.createFile(new File(configFolder, "file.yaml").toPath());
+        Path ymlFile = Files.createFile(new File(configFolder, "file.yml").toPath());
+        Files.createFile(new File(configFolder, "file").toPath());
+        Files.createFile(new File(configFolder, "file.yml.deactivated").toPath());
+        Files.createFile(new File(configFolder, "file.abc").toPath());
+
+        // Mocking endpointService methods
+        EndPoint yamlEndpoint = new EndPoint();
+        yamlEndpoint.setName("yaml");
+        Map<EndPoint, Optional<String>> mapYaml = Map.of(yamlEndpoint, Optional.empty());
+        doReturn(mapYaml).when(endPointService).loadEndpointsFromFile(yamlFile.toFile());
+
+        EndPoint ymlEndpoint = new EndPoint();
+        ymlEndpoint.setName("yml");
+        Map<EndPoint, Optional<String>> mapYml = Map.of(ymlEndpoint, Optional.empty());
+        doReturn(mapYml).when(endPointService).loadEndpointsFromFile(ymlFile.toFile());
+
+        // Act
+        List<EndpointStatutResponse> endpointsStatut = configService.reloadAllConfigurationFiles();
+
+        // Assert
+        verify(endPointService, times(1)).reinitializeEndpoints();
+        verify(endPointService, times(1)).loadEndpointsFromFile(yamlFile.toFile());
+        verify(endPointService, times(1)).loadEndpointsFromFile(ymlFile.toFile());
+        verifyNoMoreInteractions(endPointService);
+
+        List<EndpointStatutResponse> yamlEndpointStatut = endpointsStatut.stream().filter(statut -> "yaml".equals(statut.getEndpointName())).collect(Collectors.toList());
+        assertThat(yamlEndpointStatut.size()).isEqualTo(1);
+        assertThat(yamlEndpointStatut.get(0).getStatut()).isEqualTo(EndpointStatut.OK);
+
+        List<EndpointStatutResponse> ymlEndpointStatut = endpointsStatut.stream().filter(statut -> "yml".equals(statut.getEndpointName())).collect(Collectors.toList());
+        assertThat(ymlEndpointStatut.size()).isEqualTo(1);
+        assertThat(ymlEndpointStatut.get(0).getStatut()).isEqualTo(EndpointStatut.OK);
+    }
+
+    @Test
+    public void reloadAllConfigurationFiles_endpointKo() throws IOException {
+        // Arrange
+        Path yamlFile = Files.createFile(new File(configFolder, "file.yaml").toPath());
+
+        // Mocking endpointService methods
+        EndPoint yamlEndpoint = new EndPoint();
+        yamlEndpoint.setName("yaml");
+        Map<EndPoint, Optional<String>> mapYaml = Map.of(yamlEndpoint, Optional.of("error"));
+        doReturn(mapYaml).when(endPointService).loadEndpointsFromFile(yamlFile.toFile());
+
+        // Act
+        List<EndpointStatutResponse> endpointsStatut = configService.reloadAllConfigurationFiles();
+
+        // Assert
+        verify(endPointService, times(1)).reinitializeEndpoints();
+        verify(endPointService, times(1)).loadEndpointsFromFile(yamlFile.toFile());
+        verifyNoMoreInteractions(endPointService);
+
+        List<EndpointStatutResponse> yamlEndpointStatut = endpointsStatut.stream().filter(statut -> "yaml".equals(statut.getEndpointName())).collect(Collectors.toList());
+        assertThat(yamlEndpointStatut.size()).isEqualTo(1);
+        assertThat(yamlEndpointStatut.get(0).getStatut()).isEqualTo(EndpointStatut.KO);
+    }
+
+    @Test
+    public void reloadAllConfigurationFiles_noFileAvailable() throws IOException {
+        // Arrange
+
+        // Act
+        List<EndpointStatutResponse> endpointsStatut = configService.reloadAllConfigurationFiles();
+
+        // Assert
+        verify(endPointService, times(1)).reinitializeEndpoints();
+        verifyNoMoreInteractions(endPointService);
+
+        assertThat(endpointsStatut).isEmpty();
+    }
+
+    @Test
+    public void reloadAllConfigurationFiles_directory() throws IOException {
+        // Arrange
+        Files.createDirectory(new File(configFolder, "file.yaml").toPath());
+
+        // Act
+        List<EndpointStatutResponse> endpointsStatut = configService.reloadAllConfigurationFiles();
+
+        // Assert
+        verify(endPointService, times(1)).reinitializeEndpoints();
+        verifyNoMoreInteractions(endPointService);
+
+        assertThat(endpointsStatut).isEmpty();
     }
 }

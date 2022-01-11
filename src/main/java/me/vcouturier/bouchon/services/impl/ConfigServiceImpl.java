@@ -12,6 +12,7 @@ import me.vcouturier.bouchon.services.MessageService;
 import me.vcouturier.bouchon.utils.DateUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -158,7 +159,7 @@ public class ConfigServiceImpl implements ConfigService {
         endPointService.reinitializeEndpoints();
 
         File[] filesArray = this.uploadDirFile.listFiles();
-        List<File> files =  filesArray == null ? new ArrayList<>() : Arrays.stream(filesArray).filter(f -> CollectionUtils.containsAny(YAML_EXTENSION, FilenameUtils.getExtension(f.getName()))).collect(Collectors.toList());
+        List<File> files = ArrayUtils.isEmpty(filesArray) ? new ArrayList<>() : Arrays.stream(filesArray).filter(f -> CollectionUtils.containsAny(YAML_EXTENSION, FilenameUtils.getExtension(f.getName()))).collect(Collectors.toList());
         for(File file: files){
             if(file.exists()
                 && file.isFile()
