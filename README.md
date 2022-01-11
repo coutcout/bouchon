@@ -30,7 +30,7 @@
     * ~~Chargement des endpoints~~
     * ~~Chargement des fichiers au démarrage~~
   
-* Création d'un service de manipulation des fichiers d'endpoints
+*  ~~Création d'un service de manipulation des fichiers d'endpoints~~
     * ~~Service qui liste les fichiers disponibles~~
     * ~~Service qui supprime un fichier~~
     * ~~Service qui envoie un fichier~~

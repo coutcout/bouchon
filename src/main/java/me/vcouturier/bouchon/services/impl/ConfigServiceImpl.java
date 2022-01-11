@@ -78,6 +78,10 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public File uploadEndpointConfigurationFile(MultipartFile file, String configName) throws ApplicationException {
+        if(file == null){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_UPLOADING_FILE_INVALID);
+        }
+
         log.info(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_UPLOADING, file.getOriginalFilename(), configName));
         List<String> errors = this.verifyUploadedFile(file);
         if(CollectionUtils.isEmpty(errors)){

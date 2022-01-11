@@ -32,6 +32,7 @@ bouchon.messages:
   CONFIG-ENDPOINT-UPLOADING: "Upload du fichier de endpoints ''{0}'' avec comme nom de destination ''{1}''"
   CONFIG-ENDPOINT-UPLOADING-FILENAME-ALREADY-TAKEN: "Le nom de destination ''{0}'' est déjà pris, on essaie un nouveau"
   CONFIG-ENDPOINT-UPLOADING-ERROR: "Une erreur est survenue pendant l''import du fichier ''{0}''"
+  CONFIG-ENDPOINT-UPLOADING-FILE-INVALID: "Le fichier importé n'est pas valide"
   CONFIG-ENDPOINT-UPLOADING-VERIFICATION: "Verification du fichier ''{0}''"
   CONFIG-ENDPOINT-UPLOADING-VERIFICATION-ERROR: "La vérification suivante est en erreur: {0}"
   CONFIG-ENDPOINT-UPLOADING-VERIFICATION-FAILED: "Le fichier ''{0}'' n'est pas valide pour les raisons suivantes: {1}"
