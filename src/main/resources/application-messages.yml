@@ -46,6 +46,7 @@ bouchon.messages:
   CONFIG-ENDPOINT-ACTIVATION-FILE-NOT-FOUND: "Impossible de modifier le statut du fichier ''{0}'' car il n''existe pas"
   CONFIG-ENDPOINT-ACTIVATION-FILE-MODIFIED: "Statut du fichier ''{0}'' modifié pour ''{1}''"
   CONFIG-ENDPOINT-ACTIVATION-FILE-NOT-MODIFIED: "Statut du fichier ''{0}'' inchangé"
+  CONFIG-ENDPOINT-INVALID-FILENAME: "Nom du fichier invalide"
 
   # Statut des endpoints
   ENDPOINT-STATUT-OK: "OK"

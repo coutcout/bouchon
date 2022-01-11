@@ -117,6 +117,10 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Boolean deleteEndpointConfigurationFile(String filename) throws ApplicationException {
         log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_DELETE, filename));
+        if(StringUtils.isEmpty(filename)){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_INVALID_FILENAME);
+        }
+
         File fileToDelete = getFileWithOrWithoutExtension(filename, FILENAME_DEFAULT_EXT);
 
         boolean fileDeleted;

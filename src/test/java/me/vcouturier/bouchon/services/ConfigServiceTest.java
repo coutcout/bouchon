@@ -6,7 +6,9 @@ import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.services.impl.ConfigServiceImpl;
 import me.vcouturier.bouchon.utils.DateUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -353,6 +356,92 @@ public class ConfigServiceTest {
 
         // Assert
         assertThat(e).isNotNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "file.yml",
+            "file.yaml"
+    })
+    public void deleteEndpointConfigurationFile_withExtension(String filename) throws IOException, ApplicationException {
+        // Arrange
+        Path fileToDelete = Files.createFile(new File(configFolder, filename).toPath());
+
+        // Act
+        assertThat(fileToDelete.toFile().exists()).isTrue();
+        Boolean isDeleted = configService.deleteEndpointConfigurationFile(filename);
+
+        // Assert
+        assertThat(isDeleted).isTrue();
+        assertThat(fileToDelete.toFile().exists()).isFalse();
+    }
+
+    @Test
+    public void deleteEndpointConfigurationFile_withoutExtension() throws IOException, ApplicationException {
+        // Arrange
+        String filenameToDelete = "file";
+
+        Path fileToDelete = Files.createFile(new File(configFolder, filenameToDelete + ".yaml").toPath());
+
+        // Act
+        assertThat(fileToDelete.toFile().exists()).isTrue();
+        Boolean isDeleted = configService.deleteEndpointConfigurationFile(filenameToDelete);
+
+        // Assert
+        assertThat(isDeleted).isTrue();
+        assertThat(fileToDelete.toFile().exists()).isFalse();
+    }
+
+    @Test
+    public void deleteEndpointConfigurationFile_fileNotExists() {
+        // Arrange
+        String filenameToDelete = "file.yaml";
+
+        File fileToDelete = new File(configFolder, filenameToDelete);
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), Mockito.anyString());
+        // Act
+        assertThat(fileToDelete.exists()).isFalse();
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> configService.deleteEndpointConfigurationFile(filenameToDelete));
+
+        // Assert
+        assertThat(exception).isNotNull();
+    }
+
+    @Test
+    public void deleteEndpointConfigurationFile_elementIsNotFile() throws IOException {
+        // Arrange
+        String filenameToDelete = "file.yaml";
+
+        Path fileToDelete = Files.createDirectory(new File(configFolder, filenameToDelete).toPath());
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), Mockito.anyString());
+        // Act
+        assertThat(fileToDelete.toFile().exists()).isTrue();
+        assertThat(fileToDelete.toFile().isFile()).isFalse();
+
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> configService.deleteEndpointConfigurationFile(filenameToDelete));
+        
+        // Assert
+        assertThat(exception).isNotNull();
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @EmptySource
+    public void deleteEndpointConfigurationFile_invalidFilename(String filename) throws IOException {
+        // Arrange
+        Path fileToDelete = Files.createDirectory(new File(configFolder, "file.yaml").toPath());
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class));
+        // Act
+        assertThat(fileToDelete.toFile().exists()).isTrue();
+        assertThat(fileToDelete.toFile().isFile()).isFalse();
+
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> configService.deleteEndpointConfigurationFile(filename));
+
+        // Assert
+        assertThat(exception).isNotNull();
     }
 
 }
