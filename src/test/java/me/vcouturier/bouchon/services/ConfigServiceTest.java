@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -421,7 +422,7 @@ public class ConfigServiceTest {
         assertThat(fileToDelete.toFile().isFile()).isFalse();
 
         ApplicationException exception = assertThrows(ApplicationException.class, () -> configService.deleteEndpointConfigurationFile(filenameToDelete));
-        
+
         // Assert
         assertThat(exception).isNotNull();
     }
@@ -444,4 +445,33 @@ public class ConfigServiceTest {
         assertThat(exception).isNotNull();
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {
+            0,
+            1,
+            10,
+            100
+    })
+    public void getAllConfigurationFiles_nominal(int nbFiles) throws IOException {
+        // Arrange
+        String baseName = "file_";
+        List<String> fileList = new ArrayList<>();
+        for (int i = 0; i < nbFiles; i++){
+            String filename = baseName + i + ".yaml";
+            fileList.add(filename);
+            Files.createDirectory(new File(configFolder, filename).toPath());
+        }
+
+        // Act
+        List<String> existingFiles = configService.getAllConfigurationFiles();
+
+        // Assert
+        if(nbFiles == 0){
+            assertThat(existingFiles).isEmpty();
+        } else {
+            assertThat(existingFiles).isNotEmpty();
+            assertThat(existingFiles.size()).isEqualTo(nbFiles);
+            assertThat(existingFiles).containsExactlyInAnyOrderElementsOf(fileList);
+        }
+    }
 }
