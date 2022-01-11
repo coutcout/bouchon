@@ -9,9 +9,7 @@ import me.vcouturier.bouchon.model.EndPoint;
 import me.vcouturier.bouchon.model.EndpointStatutResponse;
 import me.vcouturier.bouchon.services.impl.ConfigServiceImpl;
 import me.vcouturier.bouchon.utils.DateUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,7 +87,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void init_test_folder_not_exists(){
+    public void init_test_folder_not_exists() {
         // Arrange
         ReflectionTestUtils.setField(configService, "uploadDir", "/folder/not/exists");
         ReflectionTestUtils.setField(configService, "uploadDirFile", null);
@@ -107,7 +105,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void init_test_file_not_folder(){
+    public void init_test_file_not_folder() {
         // Arrange
         File fakeDir = new File(configFolder, "fakeDir");
         ReflectionTestUtils.setField(configService, "uploadDir", fakeDir.getAbsolutePath());
@@ -462,7 +460,7 @@ public class ConfigServiceTest {
         // Arrange
         String baseName = "file_";
         List<String> fileList = new ArrayList<>();
-        for (int i = 0; i < nbFiles; i++){
+        for (int i = 0; i < nbFiles; i++) {
             String filename = baseName + i + ".yaml";
             fileList.add(filename);
             Files.createDirectory(new File(configFolder, filename).toPath());
@@ -472,7 +470,7 @@ public class ConfigServiceTest {
         List<String> existingFiles = configService.getAllConfigurationFiles();
 
         // Assert
-        if(nbFiles == 0){
+        if (nbFiles == 0) {
             assertThat(existingFiles).isEmpty();
         } else {
             assertThat(existingFiles).isNotEmpty();
