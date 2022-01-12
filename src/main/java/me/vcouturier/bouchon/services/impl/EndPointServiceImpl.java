@@ -15,6 +15,7 @@ import me.vcouturier.bouchon.services.FileService;
 import me.vcouturier.bouchon.services.MessageService;
 import me.vcouturier.bouchon.yaml.constructors.ListConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
@@ -143,15 +144,19 @@ public class EndPointServiceImpl implements EndPointService {
     }
 
     @Override
-    public Optional<EndPoint> getEndPointCalled(String endpoint) throws ApplicationException {
+    public Optional<EndPoint> getEndPointCalled(String requestedEndpoint) throws ApplicationException {
+        if(StringUtils.isEmpty(requestedEndpoint)){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_ENDPOINT_REQUESTED_URL_INVALID);
+        }
+
         List<EndPoint> availableEndpoints = mapEndpoint.values().stream()
-                .filter(endPoint -> endpoint.matches(endPoint.getUrlRegex()))
+                .filter(endPoint -> requestedEndpoint.matches(endPoint.getUrlRegex()))
                 .collect(Collectors.toList());
 
         if(availableEndpoints.size() == 1){
             return Optional.of(availableEndpoints.iterator().next());
         } else if(availableEndpoints.isEmpty()){
-            log.warn(messageService.formatMessage(MessageEnum.ENDPOINT_NOT_FOUND, endpoint));
+            log.warn(messageService.formatMessage(MessageEnum.ENDPOINT_NOT_FOUND, requestedEndpoint));
         } else {
             throw applicationExceptionFactory.createApplicationException(MessageEnum.ENDPOINT_NOT_UNIQUE, availableEndpoints.stream().map(EndPoint::getName).collect(Collectors.joining()));
         }
@@ -181,8 +186,7 @@ public class EndPointServiceImpl implements EndPointService {
 
     @Override
     public String runEndpointPost(EndPoint endPoint, String request, Map<String, String> params) throws ApplicationException {
-        Map<String, String> requestParameters = params;
-        String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
+        String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), params);
         Path file = fileService.getFilePath(endPoint.getFolderName(), fileName);
         return fileService.getFileContentToString(file);
     }
@@ -192,7 +196,7 @@ public class EndPointServiceImpl implements EndPointService {
         Map<EndPoint, Optional<String>> endpointsStatut = new HashMap<>();
 
         log.debug(messageService.formatMessage(MessageEnum.CONFIG_ENDPOINT_LOADING, endpointFile.getName()));
-        List<EndPoint> endpoints = new ArrayList<>();
+        List<EndPoint> endpoints;
         try(InputStream inputStream = new FileInputStream(endpointFile)){
             Yaml yamlParser = new Yaml(new ListConstructor<>(EndPoint.class));
             endpoints = yamlParser.load(inputStream);
