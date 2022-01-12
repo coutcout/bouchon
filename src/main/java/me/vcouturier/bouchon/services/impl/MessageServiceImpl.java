@@ -1,6 +1,5 @@
 package me.vcouturier.bouchon.services.impl;
 
-import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.properties.MessagesProperties;
@@ -20,6 +19,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public String formatMessage(MessageEnum message, String... args){
+        if(message == null){
+            throw applicationExceptionFactory.createApplicationRuntimeException(MessageEnum.ERR_MESSAGE_INVALID);
+        }
+
         String messageString = messagesProperties.getMessages().get(message.getCode());
         if(messageString == null){
             throw applicationExceptionFactory.createApplicationRuntimeException(MessageEnum.ERR_MESSAGE_NOT_FOUND, message.getCode());

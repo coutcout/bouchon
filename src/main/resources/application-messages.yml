@@ -10,6 +10,8 @@ bouchon.messages:
   INIT-ENDPOINT-ALREADY-EXISTS: "Le endpoint avec le nom ''{0}'' existe déjà"
 
   ERR-MSG-001: "Le message ''{0}'' n''existe pas"
+  ERR-MESSAGE-INVALID: "Le message est invalide"
+
 
   # Réception d'une requête
   ENDPOINT-001: "Plusieurs endpoints peuvent correspondre à la demande: {0}"
