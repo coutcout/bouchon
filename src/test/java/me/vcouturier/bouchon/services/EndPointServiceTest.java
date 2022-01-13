@@ -21,11 +21,13 @@ import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -165,7 +167,7 @@ public class EndPointServiceTest {
         ApplicationException exception = assertThrows(ApplicationException.class, () -> endPointService.getEndPointCalled(requestedEndpoint));
 
         // Assert
-        verify(applicationExceptionFactory).createApplicationException(Mockito.eq(MessageEnum.ENDPOINT_NOT_UNIQUE), Mockito.anyString());
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.ENDPOINT_NOT_UNIQUE), Mockito.anyString());
         assertThat(exception).isNotNull();
     }
 
@@ -193,6 +195,48 @@ public class EndPointServiceTest {
 
         // Assert
         assertThat(endPoint).isEmpty();
+    }
+
+    @Test
+    public void getRequestParametersGet_nominal() throws ApplicationException {
+        // Arrange
+        String request = "test_01_02";
+
+        EndPoint endpoint = new EndPoint();
+        endpoint.setUrlRegex("test_(?<a>\\d{2})_(?<b>\\d{2})");
+        endpoint.setParamsAvailable(List.of("a", "b"));
+
+        // Act
+        Map<String, String> res = endPointService.getRequestParametersGet(request, endpoint);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        assertThat(res.get("a")).isNotNull();
+        assertThat(res.get("a")).isEqualTo("01");
+
+        assertThat(res.get("b")).isNotNull();
+        assertThat(res.get("b")).isEqualTo("02");
+    }
+
+    @Test
+    public void getRequestParametersGet_invalidRegex() {
+        // Arrange
+        String request = "test_0a_02";
+
+        EndPoint endpoint = new EndPoint();
+        endpoint.setUrlRegex("test_(?<a>\\d{2})_(?<b>\\d{2})");
+        endpoint.setParamsAvailable(List.of("a", "b"));
+
+        // Mocking
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), Mockito.anyString(), Mockito.anyString());
+
+        // Act
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> endPointService.getRequestParametersGet(request, endpoint));
+
+        // Assert
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.REQUEST_MISFORMATED), Mockito.anyString(), Mockito.anyString());
+        assertThat(exception).isNotNull();
+
     }
 
 }

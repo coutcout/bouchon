@@ -164,6 +164,13 @@ public class EndPointServiceImpl implements EndPointService {
         return Optional.empty();
     }
 
+    /**
+     * Method used to retrieve the value of the configurable parts of the GET request URL
+     * @param request requested URL
+     * @param endPointCalled {@link EndPoint} corresponding to the requested URL
+     * @return a map associating the name of the parameters of the URL to their value
+     * @throws ApplicationException {@link MessageEnum#REQUEST_MISFORMATED} If the endpoint's regex fails to validate the URL
+     */
     public Map<String, String> getRequestParametersGet(String request, EndPoint endPointCalled) throws ApplicationException {
         Pattern pattern = Pattern.compile(endPointCalled.getUrlRegex());
         Matcher matcher = pattern.matcher(request);
