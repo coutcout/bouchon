@@ -38,6 +38,18 @@ public interface EndPointService {
      */
     String runEndpointGet(EndPoint e, String request) throws ApplicationException;
 
+    /**
+     * Method for processing a POST request from the Endpoint found upstream.
+     * @param endPoint {@link EndPoint} to process the request
+     * @param request {@link String} POST request to process
+     * @param params {@link Map} Map representing the parameters in the body of the POST request
+     * @return The content of the file found thanks to the request
+     * @throws ApplicationException
+     * <ul>
+     *     <li>{@link MessageEnum#REQUEST_MISFORMATED} - If the request does not match the Endpoint</li>
+     *     <li>{@link MessageEnum#FILE_ERR_READING} - If an error occurs during file recovery</li>
+     * </ul>
+     */
     String runEndpointPost(EndPoint endPoint, String request, Map<String, String> params) throws ApplicationException;
 
     Map<EndPoint, Optional<String>> loadEndpointsFromFile(File endpointFile) throws IOException;

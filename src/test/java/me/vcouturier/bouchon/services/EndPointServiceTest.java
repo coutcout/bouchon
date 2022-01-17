@@ -336,4 +336,70 @@ public class EndPointServiceTest {
         assertThat(exception).isEqualTo(applicationException);
     }
 
+    @Test
+    public void runEndpointPost_nominal() throws ApplicationException {
+        // No functional test is necessary here because everything is in already tested sub-methods
+        // Arrange
+        this.endPointService = Mockito.spy(this.endPointService);
+
+        EndPoint endpoint = new EndPoint();
+        String fileTemplate = "fileTemplate";
+        String folderName = "folderName";
+        endpoint.setFileTemplate(fileTemplate);
+        endpoint.setFolderName(folderName);
+        String request = "a";
+        String filename = "filename";
+        Path file = Path.of("/a/b");
+        String fileContent = "fileContent";
+        Map<String, String> mapRequestParameter = new HashMap<>();
+
+        doReturn(filename).when(fileService).getFileNameFromTemplate(Mockito.anyString(), Mockito.anyMap());
+        doReturn(file).when(fileService).getFilePath(Mockito.anyString(), Mockito.anyString());
+        doReturn(fileContent).when(fileService).getFileContentToString(Mockito.any(Path.class));
+
+        // Assert
+        String res = endPointService.runEndpointPost(endpoint, request, mapRequestParameter);
+
+        // Act
+        verify(fileService).getFileNameFromTemplate(fileTemplate, mapRequestParameter);
+        verify(fileService).getFilePath(folderName, filename);
+        verify(fileService).getFileContentToString(file);
+        verifyNoMoreInteractions(fileService);
+
+        assertThat(res).isEqualTo(fileContent);
+    }
+
+    @Test
+    public void runEndpointPost_file_reading_error() throws ApplicationException {
+        // Arrange
+        this.endPointService = Mockito.spy(this.endPointService);
+
+        EndPoint endpoint = new EndPoint();
+        String fileTemplate = "fileTemplate";
+        String folderName = "folderName";
+        endpoint.setFileTemplate(fileTemplate);
+        endpoint.setFolderName(folderName);
+        String request = "a";
+        String filename = "filename";
+        Path file = Path.of("/a/b");
+        Map<String, String> mapRequestParameter = new HashMap<>();
+
+        doReturn(filename).when(fileService).getFileNameFromTemplate(Mockito.anyString(), Mockito.anyMap());
+        doReturn(file).when(fileService).getFilePath(Mockito.anyString(), Mockito.anyString());
+
+        ApplicationException applicationException = new ApplicationException("code", "message");
+        doThrow(applicationException).when(fileService).getFileContentToString(Mockito.any(Path.class));
+        // Assert
+        ApplicationException exception = Assertions.assertThrows(ApplicationException.class, () -> endPointService.runEndpointPost(endpoint, request, mapRequestParameter));
+
+        // Act
+        verify(fileService).getFileNameFromTemplate(fileTemplate, mapRequestParameter);
+        verify(fileService).getFilePath(folderName, filename);
+        verify(fileService).getFileContentToString(file);
+        verifyNoMoreInteractions(fileService);
+
+        assertThat(exception).isNotNull();
+        assertThat(exception).isEqualTo(applicationException);
+    }
+
 }
