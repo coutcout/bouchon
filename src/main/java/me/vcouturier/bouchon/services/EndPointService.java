@@ -54,5 +54,8 @@ public interface EndPointService {
 
     Map<EndPoint, Optional<String>> loadEndpointsFromFile(File endpointFile) throws IOException;
 
+    /**
+     * Method to clear all Endpoints stored in the cache
+     */
     void reinitializeEndpoints();
 }

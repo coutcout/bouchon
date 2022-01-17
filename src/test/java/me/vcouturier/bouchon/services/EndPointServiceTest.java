@@ -18,7 +18,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.file.Path;
@@ -400,6 +399,24 @@ public class EndPointServiceTest {
 
         assertThat(exception).isNotNull();
         assertThat(exception).isEqualTo(applicationException);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void reinitializeEndpoints_nominal(){
+        // Arrange
+        Map<String, EndPoint> mapEndpoints = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        if (mapEndpoints != null) {
+            mapEndpoints.put("a", new EndPoint());
+        }
+
+        assertThat(mapEndpoints).isNotEmpty();
+
+        // Act
+        endPointService.reinitializeEndpoints();
+
+        // Assert
+        assertThat(mapEndpoints).isEmpty();
     }
 
 }
