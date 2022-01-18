@@ -52,6 +52,12 @@ public interface EndPointService {
      */
     String runEndpointPost(EndPoint endPoint, String request, Map<String, String> params) throws ApplicationException;
 
+    /**
+     * Méthode permettant de charger et initialiser l'ensemble des endpoints d'un fichier reçu
+     * @param endpointFile {@link File} File including the description of endpoints
+     * @return {@link Map} Map associating an endpoint with its potential error message that occurred during its initialization
+     * @throws IOException If a problem occurs while loading the file
+     */
     Map<EndPoint, Optional<String>> loadEndpointsFromFile(File endpointFile) throws IOException;
 
     /**

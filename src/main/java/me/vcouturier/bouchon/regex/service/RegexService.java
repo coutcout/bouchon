@@ -7,7 +7,12 @@ import java.util.Map;
 
 public interface RegexService {
 
-    List<String> getRegexFromString(String string);
+    /**
+     * Method to retrieve all regex names from a template
+     * @param string {@link String} Template
+     * @return List of all regex names available in the template passed as a parameter
+     */
+    List<String> getRegexNameFromString(String string);
 
     String getRegexFormatedString(String string, Map<String, ITypeRegex> parameters);
 }

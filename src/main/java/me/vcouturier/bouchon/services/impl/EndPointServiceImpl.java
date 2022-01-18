@@ -101,8 +101,24 @@ public class EndPointServiceImpl implements EndPointService {
         return urlRegex;
     }
 
-    private void verifyTemplatesCompatibility(List<String> urlRegex, List<String> fileRegex) throws ApplicationException {
-        if(!CollectionUtils.isEqualCollection(urlRegex, fileRegex)){
+    /**
+     * Method allowing to check the exact equality of the tags of the template of the URL and those of the template of the file.<br/>
+     * OK:
+     * <ul>
+     *     <li>urlTemplate : "url{numberA}"</li>
+     *     <li>fileTemplate : "file{numberA}"</li>
+     * </ul>
+     * KO:
+     * <ul>
+     *     <li>urlTemplate : "url{title}"</li>
+     *     <li>fileTemplate : "file{numberA}"</li>
+     * </ul>
+     * @param urlRegexTags {@link List} of URL template parameter tags
+     * @param fileRegexTags {@link List} of file template parameter tags
+     * @throws ApplicationException {@link MessageEnum#ERR_REGEX_NOT_EQUALS} If the two lists are different
+     */
+    private void verifyTemplatesCompatibility(List<String> urlRegexTags, List<String> fileRegexTags) throws ApplicationException {
+        if(!CollectionUtils.isEqualCollection(urlRegexTags, fileRegexTags)){
             throw applicationExceptionFactory.createApplicationException(MessageEnum.ERR_REGEX_NOT_EQUALS);
         }
     }
@@ -123,8 +139,20 @@ public class EndPointServiceImpl implements EndPointService {
         }
     }
 
+    /**
+     * Method checking that a template is valid.
+     * A template is valid if it does not have the same parameter name twice and each regex is associated with a type known to the application.
+     * @param template {@link String} Template to check
+     * @param mapEndpointRegex {@link Map} of regex used by the endpoint
+     * @return List of endpoint regex names
+     * @throws ApplicationException
+     * <ul>
+     *     <li>{@link MessageEnum#ERR_URL_DUPLICATE_REGEX} - The template has the same parameter name twice (ie. file{name}{name})</li>
+     *     <li>{@link MessageEnum#ERR_URL_UNKOWN_REGEX} - The endpoint uses a regex type unknown to the application</li>
+     * </ul>
+     */
     private List<String> verifyStringTemplate(String template, Map<String, ITypeRegex> mapEndpointRegex) throws ApplicationException {
-        List<String> regexList = regexService.getRegexFromString(template);
+        List<String> regexList = regexService.getRegexNameFromString(template);
 
         // Duplicate elements verification
         Optional<String> regex = me.vcouturier.bouchon.utils.CollectionUtils.getFirstDuplicatedEntry(regexList);

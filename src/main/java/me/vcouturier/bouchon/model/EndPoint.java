@@ -1,5 +1,6 @@
 package me.vcouturier.bouchon.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import me.vcouturier.bouchon.enums.RequestParameterPlace;
@@ -14,6 +15,10 @@ import java.util.Map;
 
 @Getter
 @Setter
+@EqualsAndHashCode(of = {
+        "name",
+        "folderName"
+})
 public class EndPoint {
     // From properties
     private String name;

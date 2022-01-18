@@ -1,0 +1,10 @@
+- name: test1
+  folderName: folder1
+  requestParameterPlace: URL
+  urlTemplate: url1{numberA}
+  fileTemplate: file1{title}
+  parameters:
+    - tag: numberA
+      type: number
+    - tag: title
+      type: string

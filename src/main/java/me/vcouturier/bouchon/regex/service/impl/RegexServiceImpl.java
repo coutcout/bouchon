@@ -23,7 +23,7 @@ public class RegexServiceImpl implements RegexService {
     private MessageService messageService;
 
     @Override
-    public List<String> getRegexFromString(String string) {
+    public List<String> getRegexNameFromString(String string) {
         Pattern p = Pattern.compile("\\{.*?}");
         Matcher m = p.matcher(string);
         return m.results()

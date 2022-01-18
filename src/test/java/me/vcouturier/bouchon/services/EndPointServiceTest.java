@@ -1,12 +1,16 @@
 package me.vcouturier.bouchon.services;
 
+import me.vcouturier.bouchon.enums.RequestParameterPlace;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.model.EndPoint;
+import me.vcouturier.bouchon.regex.enums.TypeRegex;
+import me.vcouturier.bouchon.regex.model.ITypeRegex;
 import me.vcouturier.bouchon.regex.service.RegexService;
 import me.vcouturier.bouchon.regex.service.TypeRegexService;
 import me.vcouturier.bouchon.regex.service.impl.RegexServiceImpl;
+import me.vcouturier.bouchon.regex.service.impl.TypeRegexServiceImpl;
 import me.vcouturier.bouchon.services.impl.EndPointServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +24,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +45,6 @@ public class EndPointServiceTest {
     private FileService fileService;
 
     @Mock
-    private TypeRegexService typeRegexService;
-
-    @Mock
     private ApplicationExceptionFactory applicationExceptionFactory;
 
     @Mock
@@ -56,12 +59,25 @@ public class EndPointServiceTest {
 
         endPointService = new EndPointServiceImpl();
         ReflectionTestUtils.setField(endPointService, "fileService", fileService);
-        ReflectionTestUtils.setField(endPointService, "typeRegexService", typeRegexService);
         ReflectionTestUtils.setField(endPointService, "regexService", regexService);
         ReflectionTestUtils.setField(endPointService, "applicationExceptionFactory", applicationExceptionFactory);
         ReflectionTestUtils.setField(endPointService, "messageService", messageService);
 
+        initTypeRegex();
+
         Mockito.reset(applicationExceptionFactory, messageService, fileService);
+    }
+
+    private void initTypeRegex() {
+        Map<String, ITypeRegex> map = Map.of(
+                "string", TypeRegex.STRING,
+                "number", TypeRegex.NUMBER,
+                "boolean", TypeRegex.BOOLEAN
+        );
+
+        TypeRegexServiceImpl typeRegexService = new TypeRegexServiceImpl();
+        ReflectionTestUtils.setField(typeRegexService, "mapTypeRegex", map);
+        ReflectionTestUtils.setField(endPointService, "typeRegexService", typeRegexService);
     }
 
     @ParameterizedTest
@@ -419,4 +435,233 @@ public class EndPointServiceTest {
         assertThat(mapEndpoints).isEmpty();
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_nominal() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_1.yaml");
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isEmpty();
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        assertThat(mapEndpoint).isNotEmpty();
+        assertThat(mapEndpoint).containsKey(expected.getName());
+        EndPoint endpointRes = mapEndpoint.get(expected.getName());
+        assertThat(endpointRes).isEqualTo(expected);
+        assertThat(endpointRes.getMapParameters()).isNotEmpty();
+        assertThat(endpointRes.getMapParameters()).containsKeys("numberA", "title");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_duplicatedEndpoint() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_1.yaml");
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        EndPoint existing = new EndPoint();
+        existing.setFolderName("folder1");
+        existing.setName("test1");
+
+        if (mapEndpoint != null) {
+            mapEndpoint.put(existing.getName(), existing);
+        }
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), Mockito.anyString());
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.INIT_ENDPOINT_ALREADY_EXISTS), Mockito.anyString());
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isNotEmpty();
+
+        assertThat(mapEndpoint).hasSize(1);
+        assertThat(mapEndpoint).containsKey(existing.getName());
+        if (mapEndpoint != null) {
+            assertThat(mapEndpoint.get(existing.getFileTemplate())).isNull();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_fileRegexParametersNotEqualsURLRegexParameters() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_parameters_mismatching.yaml");
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class));
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.ERR_REGEX_NOT_EQUALS));
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isNotEmpty();
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        assertThat(mapEndpoint).isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_urlTemplate_duplicatedParam() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_duplicated_regex_urlTemplate.yaml");
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), anyString());
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.ERR_URL_DUPLICATE_REGEX), anyString());
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isNotEmpty();
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        assertThat(mapEndpoint).isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_fileTemplate_duplicatedParam() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_duplicated_regex_fileTemplate.yaml");
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), anyString());
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.ERR_URL_DUPLICATE_REGEX), anyString());
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isNotEmpty();
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        assertThat(mapEndpoint).isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_urlTempalte_invalidRegexType() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_urlTemplate_invalidRegexType.yaml");
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), anyString());
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.ERR_URL_UNKOWN_REGEX), anyString());
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isNotEmpty();
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        assertThat(mapEndpoint).isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_fileTempalte_invalidRegexType() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_fileTemplate_invalidRegexType.yaml");
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), anyString());
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.ERR_URL_UNKOWN_REGEX), anyString());
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isNotEmpty();
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        assertThat(mapEndpoint).isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadEndpointsFromFile_invalidRegexType() throws IOException {
+        // Arrange
+        File endpointFile = new File("src/test/resources/me/vcouturier/bouchon/services/loadEndpointTest_invalidRegexType.yaml");
+
+        doReturn(new ApplicationException("code", "message")).when(applicationExceptionFactory).createApplicationException(Mockito.any(MessageEnum.class), anyString());
+
+        // Act
+        Map<EndPoint, Optional<String>> res = endPointService.loadEndpointsFromFile(endpointFile);
+
+        // Assert
+        assertThat(res).isNotEmpty();
+        verify(applicationExceptionFactory).createApplicationException(eq(MessageEnum.ERR_UKNOWN_REGEX_TYPE), anyString());
+
+        // Expected endpoint
+        EndPoint expected = new EndPoint();
+        expected.setFolderName("folder1");
+        expected.setName("test1");
+
+        assertThat(res).containsKey(expected);
+        assertThat(res.get(expected)).isNotEmpty();
+
+        Map<String, EndPoint> mapEndpoint = (Map<String, EndPoint>) ReflectionTestUtils.getField(endPointService, "mapEndpoint");
+        assertThat(mapEndpoint).isEmpty();
+    }
 }
