@@ -51,6 +51,13 @@ bouchon.messages:
   CONFIG-ENDPOINT-INVALID-FILENAME: "Nom du fichier invalide"
   CONFIG-ENDPOINT-REQUESTED-URL-INVALID: "L''URL demandée n'est pas valide"
 
+  # Upload
+  CONFIG_UPLOAD_INVALID_FOLDERNAME: "Nom de dossier invalide"
+
+  # Fichiers
+  FILE-LOADING-INVALID-TEMPLATE: "Le template du fichier à récupérer est invalide"
+  FILE_LOADING_INVALID_PARAMETERS: "Les paramètres du template du fichier à récupérer sont invalides"
+
   # Statut des endpoints
   ENDPOINT-STATUT-OK: "OK"
   ENDPOINT-STATUT-KO: "KO"

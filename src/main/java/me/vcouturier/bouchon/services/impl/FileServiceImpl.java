@@ -6,6 +6,7 @@ import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
 import me.vcouturier.bouchon.services.FileService;
 import me.vcouturier.bouchon.services.MessageService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,12 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public boolean createFolder(String folderName) throws ApplicationException {
-        if(Files.isDirectory(Path.of(dataFolderPath))){
+        if(StringUtils.isEmpty(folderName)){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.CONFIG_UPLOAD_INVALID_FOLDERNAME);
+        }
+
+        Path dataFolder = Path.of(dataFolderPath);
+        if(Files.exists(dataFolder) && Files.isDirectory(dataFolder)){
             Path folderPath = Path.of(dataFolderPath, folderName);
             File file = folderPath.toFile();
 
@@ -42,7 +48,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String getFileNameFromTemplate(String template, Map<String, String> params) {
+    public String getFileNameFromTemplate(String template, Map<String, String> params) throws ApplicationException {
+        if(template == null){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.FILE_LOADING_INVALID_TEMPLATE);
+        } else if(params == null){
+            throw applicationExceptionFactory.createApplicationException(MessageEnum.FILE_LOADING_INVALID_PARAMETERS);
+        }
+
         String res = template;
         for(Map.Entry<String, String> param : params.entrySet()){
             String toReplace = "\\{" + param.getKey() + "}";
