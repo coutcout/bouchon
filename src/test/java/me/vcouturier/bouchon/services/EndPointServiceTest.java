@@ -275,7 +275,7 @@ public class EndPointServiceTest {
         Map<String, String> mapRequestParameter = new HashMap<>();
         doReturn(mapRequestParameter).when(endPointService).getRequestParametersGet(Mockito.anyString(), Mockito.any(EndPoint.class));
         doReturn(filename).when(fileService).getFileNameFromTemplate(Mockito.anyString(), Mockito.anyMap());
-        doReturn(file).when(fileService).getFilePath(Mockito.anyString(), Mockito.anyString());
+        doReturn(file).when(fileService).getFilePath(Mockito.any(EndPoint.class), Mockito.anyString());
         doReturn(fileContent).when(fileService).getFileContentToString(Mockito.any(Path.class));
 
         // Assert
@@ -284,7 +284,7 @@ public class EndPointServiceTest {
         // Act
         verify(endPointService).getRequestParametersGet(request, endpoint);
         verify(fileService).getFileNameFromTemplate(fileTemplate, mapRequestParameter);
-        verify(fileService).getFilePath(folderName, filename);
+        verify(fileService).getFilePath(endpoint, filename);
         verify(fileService).getFileContentToString(file);
         verifyNoMoreInteractions(fileService);
 
@@ -333,7 +333,7 @@ public class EndPointServiceTest {
         Map<String, String> mapRequestParameter = new HashMap<>();
         doReturn(mapRequestParameter).when(endPointService).getRequestParametersGet(Mockito.anyString(), Mockito.any(EndPoint.class));
         doReturn(filename).when(fileService).getFileNameFromTemplate(Mockito.anyString(), Mockito.anyMap());
-        doReturn(file).when(fileService).getFilePath(Mockito.anyString(), Mockito.anyString());
+        doReturn(file).when(fileService).getFilePath(Mockito.any(EndPoint.class), Mockito.anyString());
 
         ApplicationException applicationException = new ApplicationException("code", "message");
         doThrow(applicationException).when(fileService).getFileContentToString(Mockito.any(Path.class));
@@ -343,7 +343,7 @@ public class EndPointServiceTest {
         // Act
         verify(endPointService).getRequestParametersGet(request, endpoint);
         verify(fileService).getFileNameFromTemplate(fileTemplate, mapRequestParameter);
-        verify(fileService).getFilePath(folderName, filename);
+        verify(fileService).getFilePath(endpoint, filename);
         verify(fileService).getFileContentToString(file);
         verifyNoMoreInteractions(fileService);
 
@@ -369,7 +369,7 @@ public class EndPointServiceTest {
         Map<String, String> mapRequestParameter = new HashMap<>();
 
         doReturn(filename).when(fileService).getFileNameFromTemplate(Mockito.anyString(), Mockito.anyMap());
-        doReturn(file).when(fileService).getFilePath(Mockito.anyString(), Mockito.anyString());
+        doReturn(file).when(fileService).getFilePath(Mockito.any(EndPoint.class), Mockito.anyString());
         doReturn(fileContent).when(fileService).getFileContentToString(Mockito.any(Path.class));
 
         // Assert
@@ -377,7 +377,7 @@ public class EndPointServiceTest {
 
         // Act
         verify(fileService).getFileNameFromTemplate(fileTemplate, mapRequestParameter);
-        verify(fileService).getFilePath(folderName, filename);
+        verify(fileService).getFilePath(endpoint, filename);
         verify(fileService).getFileContentToString(file);
         verifyNoMoreInteractions(fileService);
 
@@ -400,7 +400,7 @@ public class EndPointServiceTest {
         Map<String, String> mapRequestParameter = new HashMap<>();
 
         doReturn(filename).when(fileService).getFileNameFromTemplate(Mockito.anyString(), Mockito.anyMap());
-        doReturn(file).when(fileService).getFilePath(Mockito.anyString(), Mockito.anyString());
+        doReturn(file).when(fileService).getFilePath(Mockito.any(EndPoint.class), Mockito.anyString());
 
         ApplicationException applicationException = new ApplicationException("code", "message");
         doThrow(applicationException).when(fileService).getFileContentToString(Mockito.any(Path.class));
@@ -409,7 +409,7 @@ public class EndPointServiceTest {
 
         // Act
         verify(fileService).getFileNameFromTemplate(fileTemplate, mapRequestParameter);
-        verify(fileService).getFilePath(folderName, filename);
+        verify(fileService).getFilePath(endpoint, filename);
         verify(fileService).getFileContentToString(file);
         verifyNoMoreInteractions(fileService);
 

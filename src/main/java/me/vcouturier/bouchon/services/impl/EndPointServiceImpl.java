@@ -215,14 +215,14 @@ public class EndPointServiceImpl implements EndPointService {
     public String runEndpointGet(EndPoint endPoint, String request) throws ApplicationException {
         Map<String, String> requestParameters = getRequestParametersGet(request, endPoint);
         String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), requestParameters);
-        Path file = fileService.getFilePath(endPoint.getFolderName(), fileName);
+        Path file = fileService.getFilePath(endPoint, fileName);
         return fileService.getFileContentToString(file);
     }
 
     @Override
     public String runEndpointPost(EndPoint endPoint, String request, Map<String, String> params) throws ApplicationException {
         String fileName = fileService.getFileNameFromTemplate(endPoint.getFileTemplate(), params);
-        Path file = fileService.getFilePath(endPoint.getFolderName(), fileName);
+        Path file = fileService.getFilePath(endPoint, fileName);
         return fileService.getFileContentToString(file);
     }
 

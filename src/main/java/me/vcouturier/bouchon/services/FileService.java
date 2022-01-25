@@ -2,6 +2,7 @@ package me.vcouturier.bouchon.services;
 
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
+import me.vcouturier.bouchon.model.EndPoint;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -32,7 +33,19 @@ public interface FileService {
      */
     String getFileNameFromTemplate(String template, Map<String, String> params) throws ApplicationException;
 
-    Path getFilePath(String endpointFolder, String fileName);
+    /**
+     * Method to retrieve the absolute path of a file for an endpoint
+     * @param endpointFolder {@link EndPoint} for which we are looking for a file
+     * @param fileName {@link String} name of file sought
+     * @return {@link Path} representing the absolute path of the sought file
+     */
+    Path getFilePath(EndPoint endpointFolder, String fileName);
 
+    /**
+     * Method to retrieve the contents of a file
+     * @param file {@link Path} of the file whose content we want to retrieve
+     * @return {@link String} File content
+     * @throws ApplicationException - If an error occurred while reading the file
+     */
     String getFileContentToString(Path file) throws ApplicationException;
 }

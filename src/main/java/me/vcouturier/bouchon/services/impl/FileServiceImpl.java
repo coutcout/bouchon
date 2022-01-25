@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.vcouturier.bouchon.exceptions.ApplicationException;
 import me.vcouturier.bouchon.exceptions.factory.ApplicationExceptionFactory;
 import me.vcouturier.bouchon.logs.enums.MessageEnum;
+import me.vcouturier.bouchon.model.EndPoint;
 import me.vcouturier.bouchon.services.FileService;
 import me.vcouturier.bouchon.services.MessageService;
 import org.apache.commons.lang3.StringUtils;
@@ -67,8 +68,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Path getFilePath(String endpointFolder, String fileName) {
-        return Path.of(this.dataFolderPath, endpointFolder, fileName);
+    public Path getFilePath(EndPoint endpointFolder, String fileName) {
+        return Path.of(this.dataFolderPath, endpointFolder.getFolderName(), fileName);
     }
 
     @Override
