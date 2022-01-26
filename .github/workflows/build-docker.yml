@@ -24,6 +24,11 @@ jobs:
       - name: Build Gradle
         uses: gradle/gradle-build-action@v2
       - run: gradle build
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: build/test-results/**/*.xml
       - name: List all files
         run: |
           ls
