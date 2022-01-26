@@ -1,5 +1,9 @@
 # bouchon
 
+## Lancement de l'application
+
+Les fichiers de configuration étant séparés de l'application, il est nécessaire de spécifier leur emplacement à l'aide de l'option jvm suivante:
+>--spring.config.location=<PATH_TO_APPLICATION_YAML>
 ## TODO
 
 ### 1.0.0
