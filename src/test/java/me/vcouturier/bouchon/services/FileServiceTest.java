@@ -260,7 +260,7 @@ public class FileServiceTest {
         Path res = fileService.getFilePath(endPoint, filename);
 
         // Assert
-        assertThat(res.toFile().getAbsolutePath()).isEqualTo(tmpDataDir.getAbsolutePath() + "\\" + endPoint.getFolderName() + "\\" + filename);
+        assertThat(res.toFile().getAbsolutePath()).isEqualTo(tmpDataDir.getAbsolutePath() + File.separator + endPoint.getFolderName() + File.separator + filename);
     }
 
     @Test
