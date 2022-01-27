@@ -28,7 +28,12 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
-          files: build/test-results/**/*.xml
+          files: build/test-results/junit/**/*.xml
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: build # optional
       - name: List all files
         run: |
           ls
