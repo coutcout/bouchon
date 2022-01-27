@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'com.palantir.docker' version '0.26.0'
+	id 'jacoco'
 }
 
 group = 'me.vcouturier'
@@ -56,4 +57,21 @@ docker{
 
 test {
 	useJUnitPlatform()
+	finalizedBy(jacocoTestReport)
+	reports {
+		junitXml.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "junit"))
+		html.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "junit"))
+	}
 }
+
+jacocoTestReport{
+	dependsOn(test)
+	reports{
+		html.enabled(true)
+		xml.enabled(true)
+		xml.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "jacoco" + File.separator + "coverage.xml"))
+		html.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "jacoco" + File.separator + "html"))
+	}
+}
+
+
