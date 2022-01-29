@@ -55,7 +55,7 @@ jobs:
       - name: Get version
         id: get_version
         run: |
-          echo "project_version={gradle printVersion}" >> $GITHUB_ENV
+          echo "project_version=${gradle printVersion}" >> $GITHUB_ENV
       - name: print version
         run: |
           echo "Version ${{env.project_version}}"
