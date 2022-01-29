@@ -74,4 +74,10 @@ jacocoTestReport{
 	}
 }
 
+task(printVersion) {
+	doLast {
+		logger.quiet(version)
+	}
+}
+
 
