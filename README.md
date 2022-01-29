@@ -1,5 +1,7 @@
 # bouchon
 
+[![codecov](https://codecov.io/gh/coutcout/bouchon/branch/develop/graph/badge.svg?token=CJPS2U6W16)](https://codecov.io/gh/coutcout/bouchon)
+
 ## Lancement de l'application
 
 Les fichiers de configuration étant séparés de l'application, il est nécessaire de spécifier leur emplacement à l'aide de l'option jvm suivante:
