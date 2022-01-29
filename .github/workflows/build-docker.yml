@@ -23,6 +23,14 @@ jobs:
           distribution: 'adopt'
       - name: Gradle - Prepare build
         uses: gradle/gradle-build-action@v2
+      - name: Get version
+        id: get_version
+        run: |
+          BUILD_VERSION=$(gradle --warning-mode none --quiet printVersion)
+          echo "project_version=$BUILD_VERSION" >> $GITHUB_ENV
+      - name: print version
+        run: |
+          echo "Version ${{env.project_version}}"
       - name: Gradle - Build
         run: gradle build
       - name: Publish Unit Test Results
@@ -52,12 +60,5 @@ jobs:
           build-args: |
             JAR_FILE=./build/libs/bouchon-0.0.1-SNAPSHOT.jar
             CONFIG_FOLDER=./config
-      - name: Get version
-        id: get_version
-        run: |
-          echo "project_version=${gradle printVersion}" >> $GITHUB_ENV
-      - name: print version
-        run: |
-          echo "Version ${{env.project_version}}"
         
        
