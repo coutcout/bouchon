@@ -28,7 +28,7 @@ jobs:
         run: |
           BUILD_VERSION=$(gradle --warning-mode none --quiet printVersion)
           echo "project_version=$BUILD_VERSION" >> $GITHUB_ENV
-          IS_SNAPSHOT=[[$BUILD_VERSION = *-SNAPSHOT]]
+          IS_SNAPSHOT==$([[$BUILD_VERSION = *-SNAPSHOT]])
           echo "is_snapshot=$IS_SNAPSHOT" >> $GITHUB_ENV
       - name: print version
         run: |
