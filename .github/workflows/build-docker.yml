@@ -20,9 +20,8 @@ jobs:
         id: get_version
         run: |
           BUILD_VERSION=$(grep "^version" build.gradle | sed -E 's/^version.*?\x27(.*?)\x27/\1/')
-          echo "version $BUILD_VERSION"
           echo "project_version=$BUILD_VERSION" >> $GITHUB_ENV
-          IS_SNAPSHOT=[[$BUILD_VERSION = *-SNAPSHOT]]
+          [[ $BUILD_VERSION = *-SNAPSHOT ]] && IS_SNAPSHOT=true || IS_SNAPSHOT=false
           echo "is_snapshot=$IS_SNAPSHOT" >> $GITHUB_ENV
       - name: print version
         run: |
