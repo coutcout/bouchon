@@ -50,14 +50,16 @@ jobs:
       - name: List all files
         run: |
           ls
+    outputs:
+      raw-project-version: ${{ env.raw_project_version }}
   docker-build-push:
     needs: build
     uses: ./.github/workflows/docker-push.yml
     with:
       docker-build-args: |
-        JAR_FILE=./build/libs/bouchon-${{ env.raw_project_version }}.jar
+        JAR_FILE=./build/libs/bouchon-${{ needs.build.outputs.raw-project-version }}.jar
         CONFIG_FOLDER=./config
-      image-version: $${ env.raw_project_version }}
+      image-version: ${{ needs.build.outputs.raw-project-version }}
     secrets:
       username: ${{ secrets.DOCKERHUB_USERNAME }}
       token: ${{ secrets.DOCKERHUB_TOKEN }}
