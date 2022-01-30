@@ -50,16 +50,28 @@ jobs:
       - name: List all files
         run: |
           ls
+      - name: Caching files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ./build/libs/bouchon-${{ env.raw_project_version }}.jar
+          key: ${{ env.raw_project_version }}-artifacts-${{ github.run_id }}
+          restore-keys: |
+            ${{ env.raw_project_version }}
+            artifacts
     outputs:
       raw-project-version: ${{ env.raw_project_version }}
+      cache-key: ${{ env.raw_project_version }}-artifacts-${{ github.run_id }}
+
   docker-build-push:
     needs: build
     uses: ./.github/workflows/docker-push.yml
     with:
-      docker-build-args: |
-        JAR_FILE=./build/libs/bouchon-${{ needs.build.outputs.raw-project-version }}.jar
-        CONFIG_FOLDER=./config
+      cache-key: $${{ needs.build.outputs.cache-key }}
+      jar-path: ./build/libs/bouchon-${{ needs.build.outputs.raw-project-version }}.jar
       image-version: ${{ needs.build.outputs.raw-project-version }}
+      docker-build-args: |
+        CONFIG_FOLDER=./config
     secrets:
       username: ${{ secrets.DOCKERHUB_USERNAME }}
       token: ${{ secrets.DOCKERHUB_TOKEN }}

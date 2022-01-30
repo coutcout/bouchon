@@ -3,11 +3,17 @@ name: Docker buidl & push workflow
 on:
   workflow_call:
     inputs:
-      docker-build-args:
+      cache-key:
+        required: true
+        type: string
+      jar-path:
         required: true
         type: string
       image-version:
         required: true
+        type: string
+      docker-build-args:
+        required: false
         type: string
     secrets:
       username:
@@ -20,6 +26,27 @@ jobs:
     name: Build dockerfile and push to dockerhub
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - name: List all files
+        run: |
+          ls
+          pwd
+      - run: |
+          mkdir ./build
+          mkdir ./build/libs
+      - name: Get artifacts from cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ inputs.jar-path }}
+          key: ${{ inputs.cache-key }}
+          restore-keys: |
+            ${{ inputs.image-version }}
+            artifacts
+      - name: List all files
+        run: |
+          ls
+          ls ./build/libs
       - name: Docker - login
         uses: docker/login-action@v1
         with:
@@ -31,4 +58,6 @@ jobs:
           context: .
           push: true
           tags: coutcout/bouchon:${{ inputs.image-version }}
-          build-args: ${{ inputs.docker-build-args }}
+          build-args: |
+            JAR_FILE=${{ inputs.jar-path }}
+            ${{ inputs.docker-build-args }}
