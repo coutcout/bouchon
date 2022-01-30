@@ -60,9 +60,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: coutcout/bouchon:${{ env.project_version }}
+          tags: coutcout/bouchon:${{ env.raw_project_version }}
           build-args: |
-            JAR_FILE=./build/libs/bouchon-${{ env.project_version }}.jar
+            JAR_FILE=./build/libs/bouchon-${{ env.raw_project_version }}.jar
             CONFIG_FOLDER=./config
-        
-       
