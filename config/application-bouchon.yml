@@ -1,4 +1,4 @@
 bouchon:
   folder:
-    data: "path_to_data_folder"
-    config: "path_to_config_folder"
+    data: "/mnt/data"
+    config: "/home/bouchon/config"
