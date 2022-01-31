@@ -6,20 +6,30 @@ on:
       cache-key:
         required: true
         type: string
+        description: Cache key where the jar artifact is stored
       jar-path:
         required: true
         type: string
-      image-version:
+        description: Jar path in cache
+      image-tag:
         required: true
         type: string
+        description: Docker image tag
       docker-build-args:
         required: false
         type: string
+        description: Additional docker build arguments (other than JAR location)
+      docker-push:
+        required: true
+        type: boolean
+        description: True if it is necessary to push the image to the hub. False if only the build is wanted.
     secrets:
       username:
         required: true
+        description: DockerHub username
       token:
         required: true
+        description: DockerHub token
 
 jobs:
   docker_build_push:
@@ -27,37 +37,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: List all files
-        run: |
-          ls
-          pwd
-      - run: |
-          mkdir ./build
-          mkdir ./build/libs
-      - name: Get artifacts from cache
+      - name: Cache - Create cache folder
+        run: mkdir -p ./build/libs
+      - name: Cache - Get artifact
         id: cache
         uses: actions/cache@v2
         with:
           path: ${{ inputs.jar-path }}
           key: ${{ inputs.cache-key }}
-          restore-keys: |
-            ${{ inputs.image-version }}
-            artifacts
-      - name: List all files
-        run: |
-          ls
-          ls ./build/libs
-      - name: Docker - login
+      - name: Docker - Login
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.username }}
           password: ${{ secrets.token }}
-      - name: Docker - build & push
+      - name: Docker - Build & push
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
-          tags: coutcout/bouchon:${{ inputs.image-version }}
+          push: ${{ inputs.docker-push }}
+          tags: coutcout/bouchon:${{ inputs.image-tag }}
           build-args: |
             JAR_FILE=${{ inputs.jar-path }}
             ${{ inputs.docker-build-args }}

@@ -56,9 +56,6 @@ jobs:
           path: |
             ./build/libs/bouchon-${{ env.raw_project_version }}.jar
           key: ${{ env.raw_project_version }}-artifacts-${{ github.run_id }}
-          restore-keys: |
-            ${{ env.raw_project_version }}
-            artifacts
     outputs:
       raw-project-version: ${{ env.raw_project_version }}
       cache-key: ${{ env.raw_project_version }}-artifacts-${{ github.run_id }}
@@ -67,11 +64,12 @@ jobs:
     needs: build
     uses: ./.github/workflows/docker-push.yml
     with:
-      cache-key: $${{ needs.build.outputs.cache-key }}
+      cache-key: ${{ needs.build.outputs.cache-key }}
       jar-path: ./build/libs/bouchon-${{ needs.build.outputs.raw-project-version }}.jar
-      image-version: ${{ needs.build.outputs.raw-project-version }}
+      image-tag: ${{ needs.build.outputs.raw-project-version }}
       docker-build-args: |
         CONFIG_FOLDER=./config
+      docker-push: true
     secrets:
       username: ${{ secrets.DOCKERHUB_USERNAME }}
       token: ${{ secrets.DOCKERHUB_TOKEN }}
