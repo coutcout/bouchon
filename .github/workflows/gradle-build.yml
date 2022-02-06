@@ -86,7 +86,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ./build/libs/bouchon-${{ needs.versions.outputs.raw_version }}.jar
+            ./build/libs/bouchon-${{ inputs.raw_version }}.jar
           key: ${{ needs.generate_cache_keys.outputs.build }}
 
   unit_test_results:
