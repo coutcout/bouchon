@@ -7,10 +7,6 @@ on:
         description: "Project version without modification"
         required: true
         type: string
-      project_version:
-        description: "Project version"
-        required: false
-        type: string
       java_version:
         description: "Java version to use"
         required: true
@@ -18,10 +14,6 @@ on:
       java_dist:
         description: "Java distribution to use"
         required: true
-        type: string
-      tag_version:
-        description: "Tag version"
-        required: false
         type: string
     outputs:
       cache-key:
@@ -40,13 +32,6 @@ jobs:
       build: ${{ steps.build_key.outputs.key }}
       ut: ${{ steps.unit_test_key.outputs.key }}
     steps:
-      -
-        name: Generate build key
-        id: build_key
-        run: |
-          KEY=${{ inputs.raw_version }}-artifacts-${{ github.run_id }}
-          echo "::set-output name=key::$KEY"
-
       - name: Generate Unit Test key
         id: unit_test_key
         run: |
@@ -57,7 +42,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: generate_cache_keys
-
     steps:
       -
         name: Checkout sourcecode
@@ -75,22 +59,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       -
-        name: Change version
-        if: ${{ inputs.tag_version != '' &&  (inputs.project_version == '' || inputs.tag_version != inputs.project_version }}
-        run: gradle setVersion -P${{inputs.tag_version}}
-
-      -
-        name: Gradle - Build
-        run: gradle build
-
-      -
-        name: Commit version change
-        uses: EndBug/add-and-commit@v8
-        with:
-          add: './gradle.propertie'
-          message: 'Release - Version modification'
-          committer_name: GitHub Actions
-          committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+        name: Gradle - Test
+        run: gradle test
 
       -
         name: Caching test files
@@ -100,14 +70,6 @@ jobs:
           path: |
             ./build/test-results/
           key: ${{ needs.generate_cache_keys.outputs.ut }}
-
-      -
-        name: Caching files
-        uses: actions/cache@v2
-        with:
-          path: |
-            ./build/libs/bouchon-${{ inputs.raw_version }}.jar
-          key: ${{ needs.generate_cache_keys.outputs.build }}
 
   unit_test_results:
     name: Generate Unit Tests report
@@ -146,10 +108,3 @@ jobs:
         with:
           token: ${{ secrets.codecov_token }}
           flags: build
-
-  increment_version:
-    needs: [build]
-    name: Incrementation of project version
-    uses: ./.github/workflows/gradle-get-versions.yml
-    with:
-      group_to_increment: "patch"

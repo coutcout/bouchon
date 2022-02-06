@@ -1,9 +1,9 @@
-name: Docker build
+name: Release workflow
 
 on:
   push:
-    branches:
-      - feature/cicd
+    tags:
+      - v*
 
 jobs:
   versions:

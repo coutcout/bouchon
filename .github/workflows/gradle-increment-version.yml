@@ -1,0 +1,31 @@
+name: Gradle - Increment version project
+
+on:
+  workflow_call:
+    inputs:
+      group_to_increment:
+        description: "Which group has to be increased"
+        required: true
+        type: string
+        default: "patch"
+      isRelease:
+        description: "If the new version is a release"
+        required: false
+        type: boolean
+
+jobs:
+  increment:
+    name: Increment
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout project
+        uses: actions/checkout@v2
+
+      -
+        name: Increment version
+        run: |
+          GRADLE_ARGS = "-P${{ inputs.group_to_increment }} ${{ isRelease ? '-PisRelease' : '' }}"
+          echo $GRADLE_ARGS
+          ./gradlew incrementVersion $GRADLE_ARGS
+          

@@ -12,6 +12,12 @@ on:
       is_snapshot:
         description: "Project version is a snapshot"
         value: ${{ jobs.get_versions_job.outputs.is_snapshot }}
+      tag:
+        description: "Git tag"
+        value: ${{ jobs.get_versions_job.outputs.is_snapshot }}
+      tag_version:
+        description: "Git tag version (without the prefix 'v')"
+        value: ${{ jobs.get_versions_job.outputs.is_snapshot }}
 
 jobs:
   get_versions_job:
@@ -21,18 +27,34 @@ jobs:
       raw_version: ${{ steps.get_version.outputs.raw_project_version }}
       version: ${{ steps.get_version.outputs.project_version }}
       is_snapshot: ${{ steps.get_version.outputs.is_snapshot }}
+      tag: ${{ steps.get_tag.outputs.tag }}
+      tag_version: ${{ steps.get_tag.outputs.tag_version }}
     steps:
       - name: Checkout project
         uses: actions/checkout@v2
       - name: Get version
         id: get_version
         run: |
-          RAW_BUILD_VERSION=$(grep "^version" build.gradle | sed -E 's/^version.*?\x27(.*?)\x27/\1/')
+          RAW_BUILD_VERSION=$(grep "^version" gradle.properties | sed -E 's/^version.*?\x27(.*?)\x27/\1/')
           echo "::set-output name=raw_project_version::$RAW_BUILD_VERSION"
           BUILD_VERSION=$(echo $RAW_BUILD_VERSION | sed -E 's/([0-9]*?\.[0-9]*?\.[0-9]*?).*/\1/')
           echo "::set-output name=project_version::$BUILD_VERSION"
           [[ $RAW_BUILD_VERSION = *-SNAPSHOT ]] && IS_SNAPSHOT=true || IS_SNAPSHOT=false
           echo "::set-output name=is_snapshot::$IS_SNAPSHOT"
+      - name: Get tag
+        id: get_tag
+        run: |
+          [[ ! "$GITHUB_REF" =~ refs/tags ]] && exit
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "::set-output name=tag::$TAG"
+          [[ ! "TAG" =~ v ]] && exit
+          TAG_VERSION=${TAG#v}
+          echo "::set-output name=tag_version::$TAG_VERSION"
       - name: Print result
         run: |
-          echo "raw_version: ${{ steps.get_version.outputs.raw_project_version }} - version: ${{ steps.get_version.outputs.project_version }} - is_snapshot: ${{ steps.get_version.outputs.is_snapshot }}"
+          echo "raw_version: ${{ steps.get_version.outputs.raw_project_version }}"
+          echo "version: ${{ steps.get_version.outputs.project_version }}"
+          echo "is_snapshot: ${{ steps.get_version.outputs.is_snapshot }}"
+          echo "tag: ${{ steps.get_tag.outputs.tag }}"
+          echo "tag_version: ${{ steps.get_tag.outputs.tag_version }}"
+          

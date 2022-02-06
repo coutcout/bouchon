@@ -6,8 +6,6 @@ plugins {
 	id 'jacoco'
 }
 
-group = 'me.vcouturier'
-version = '0.0.3-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -79,5 +77,59 @@ task(printVersion) {
 		logger.quiet(version)
 	}
 }
+
+task(setVersion){
+	doLast {
+		def versionPattern = ~/\d+?\.\d+?\.\d+?(-SNAPSHOT)?/
+		if(versionPattern.matcher(newVersion)){
+			ant.propertyfile(file: "gradle.properties") {
+				entry(key: "version", value: newVersion)
+			}
+		} else {
+			throw new InvalidUserDataException("Invalid version format")
+		}
+	}
+}
+
+task(incrementVersion){
+	doLast {
+		def major = 0
+		def minor = 0
+		def patch = 0
+		def snapshot = project.hasProperty("isRelease")  ? "" : "-SNAPSHOT"
+
+		(version =~ /(\d+?)\.(\d+?)\.(\d+?)(-SNAPSHOT)?/).each { versionMatch, majorMatch, minorMatch, patchMatch, snapshotMatch ->
+			major = majorMatch
+			minor = minorMatch
+			patch = patchMatch
+		}
+
+		if(major && minor && patch){
+			switch (increment){
+				case "major":
+					logger.info("Major version incremented")
+					major++
+					break
+				case "minor":
+					logger.info("Minor version incremented")
+					minor++
+					break
+				case "patch":
+					logger.info("Patch version incremented")
+					patch++
+					break
+				default:
+					throw new InvalidUserDataException("Invalid version group to increment")
+			}
+
+			def newVersion = major + "." + minor + "." + patch + snapshot
+			logger.info("New version:" + newVersion)
+			ant.propertyfile(file: "gradle.properties") {
+				entry(key: "version", value: newVersion)
+			}
+		}
+	}
+}
+
 
 
