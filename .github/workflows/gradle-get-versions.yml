@@ -35,7 +35,7 @@ jobs:
       - name: Get version
         id: get_version
         run: |
-          RAW_BUILD_VERSION=$(grep "^version" gradle.properties | sed -E 's/^version.*?\x27(.*?)\x27/\1/')
+          RAW_BUILD_VERSION=$(grep "^version" gradle.properties | sed -E 's/version.*?\x27(.*?)\x27/\1/')
           echo "::set-output name=raw_project_version::$RAW_BUILD_VERSION"
           BUILD_VERSION=$(echo $RAW_BUILD_VERSION | sed -E 's/([0-9]*?\.[0-9]*?\.[0-9]*?).*/\1/')
           echo "::set-output name=project_version::$BUILD_VERSION"
