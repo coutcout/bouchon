@@ -25,7 +25,7 @@ jobs:
       -
         name: Increment version
         run: |
-          GRADLE_ARGS = "-P${{ inputs.group_to_increment }} ${{ isRelease ? '-PisRelease' : '' }}"
+          GRADLE_ARGS = "-P${{ inputs.group_to_increment }} ${{ inputs.isRelease ? '-PisRelease' : '' }}"
           echo $GRADLE_ARGS
           ./gradlew incrementVersion $GRADLE_ARGS
           
