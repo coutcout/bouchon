@@ -16,6 +16,7 @@ jobs:
       raw_version: ${{ needs.versions.outputs.raw_version }}
       java_version: "11"
       java_dist: "adopt"
+      tag_version: $ {{ github.ref_name }}
     secrets:
       codecov_token: ${{ secrets.CODECOV_TOKEN }}
 

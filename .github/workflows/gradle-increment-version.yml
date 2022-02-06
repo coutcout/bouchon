@@ -55,5 +55,5 @@ jobs:
         run: |
           GRADLE_ARGS="-Pincrement=${{ inputs.group_to_increment }} -PisRelease"
           echo $GRADLE_ARGS
-          ./gradlew incrementVersion $GRADLE_ARGS
+          gradle incrementVersion $GRADLE_ARGS
           
