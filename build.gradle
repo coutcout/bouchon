@@ -3,10 +3,9 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'com.palantir.docker' version '0.26.0'
+	id 'jacoco'
 }
 
-group = 'me.vcouturier'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -56,4 +55,81 @@ docker{
 
 test {
 	useJUnitPlatform()
+	finalizedBy(jacocoTestReport)
+	reports {
+		junitXml.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "junit"))
+		html.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "junit"))
+	}
 }
+
+jacocoTestReport{
+	dependsOn(test)
+	reports{
+		html.enabled(true)
+		xml.enabled(true)
+		xml.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "jacoco" + File.separator + "coverage.xml"))
+		html.destination(file(getBuildDir().toString() + File.separator + "test-results" + File.separator + "jacoco" + File.separator + "html"))
+	}
+}
+
+task(printVersion) {
+	doLast {
+		logger.quiet(version)
+	}
+}
+
+task(setVersion){
+	doLast {
+		def versionPattern = ~/\d+?\.\d+?\.\d+?(-SNAPSHOT)?/
+		if(versionPattern.matcher(newVersion)){
+			ant.propertyfile(file: "gradle.properties") {
+				entry(key: "version", value: newVersion)
+			}
+		} else {
+			throw new InvalidUserDataException("Invalid version format")
+		}
+	}
+}
+
+task(incrementVersion){
+	doLast {
+		def major = 0
+		def minor = 0
+		def patch = 0
+		def snapshot = project.hasProperty("isRelease")  ? "" : "-SNAPSHOT"
+
+		(version =~ /(\d+?)\.(\d+?)\.(\d+?)(-SNAPSHOT)?/).each { versionMatch, majorMatch, minorMatch, patchMatch, snapshotMatch ->
+			major = majorMatch
+			minor = minorMatch
+			patch = patchMatch
+		}
+
+		if(major && minor && patch){
+			switch (increment){
+				case "major":
+					logger.info("Major version incremented")
+					major++
+					break
+				case "minor":
+					logger.info("Minor version incremented")
+					minor++
+					break
+				case "patch":
+					logger.info("Patch version incremented")
+					patch++
+					break
+				default:
+					throw new InvalidUserDataException("Invalid version group to increment")
+			}
+
+			def newVersion = major + "." + minor + "." + patch + snapshot
+			logger.info("New version:" + newVersion)
+			ant.propertyfile(file: "gradle.properties") {
+				entry(key: "version", value: newVersion)
+			}
+		}
+	}
+}
+
+
+
