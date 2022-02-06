@@ -19,6 +19,13 @@ jobs:
     secrets:
       codecov_token: ${{ secrets.CODECOV_TOKEN }}
 
+  increment_version:
+    needs: [build]
+    name: Incrementation of project version
+    uses: ./.github/workflows/gradle-increment-version.yml
+    with:
+      group_to_increment: "patch"
+
   docker-build-push:
     needs: [versions, build]
     uses: ./.github/workflows/docker-push.yml
