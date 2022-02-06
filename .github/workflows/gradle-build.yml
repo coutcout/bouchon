@@ -78,8 +78,8 @@ jobs:
         name: Change version
         if: ${{ inputs.tag_version != '' &&  (inputs.project_version == '' || inputs.tag_version != inputs.project_version) }}
         run: |
-          GRADLE_ARGS=${{inputs.tag_version}}
-          gradle setVersion -P$GRADLE_ARGS
+          GRADLE_ARGS="setVersion ${{inputs.tag_version}}"
+          gradle $GRADLE_ARGS
 
       -
         name: Gradle - Build
