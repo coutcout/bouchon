@@ -25,6 +25,8 @@ jobs:
     uses: ./.github/workflows/gradle-increment-version.yml
     with:
       group_to_increment: "patch"
+      java_version: "11"
+      java_dist: "adopt"
 
   docker-build-push:
     needs: [versions, build]
