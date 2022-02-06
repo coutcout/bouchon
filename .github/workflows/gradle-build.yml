@@ -150,6 +150,6 @@ jobs:
   increment_version:
     needs: [build]
     name: Incrementation of project version
-    uses: ./.github/workflows/gradle-get-versions.yml
+    uses: ./.github/workflows/gradle-increment-version.yml
     with:
       group_to_increment: "patch"
