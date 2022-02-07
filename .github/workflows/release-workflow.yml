@@ -1,9 +1,6 @@
 name: Release workflow
 
-on:
-  push:
-    tags:
-      - v*
+on: workflow_dispatch
 
 jobs:
   versions:
@@ -14,10 +11,20 @@ jobs:
     uses: ./.github/workflows/gradle-build.yml
     with:
       raw_version: ${{ needs.versions.outputs.raw_version }}
+      project_version: ${{ needs.versions.outputs.version }}
       java_version: "11"
       java_dist: "adopt"
     secrets:
       codecov_token: ${{ secrets.CODECOV_TOKEN }}
+
+  increment_version:
+    needs: [build]
+    name: Incrementation of project version
+    uses: ./.github/workflows/gradle-increment-version.yml
+    with:
+      group_to_increment: "patch"
+      java_version: "11"
+      java_dist: "adopt"
 
   docker-build-push:
     needs: [versions, build]

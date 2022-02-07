@@ -19,10 +19,6 @@ on:
         description: "Java distribution to use"
         required: true
         type: string
-      tag_version:
-        description: "Tag version"
-        required: false
-        type: string
     outputs:
       cache-key:
         description: "Key of the build files cache"
@@ -76,8 +72,8 @@ jobs:
 
       -
         name: Change version
-        if: ${{ inputs.tag_version != '' &&  (inputs.project_version == '' || inputs.tag_version != inputs.project_version }}
-        run: gradle setVersion -P${{inputs.tag_version}}
+        if: ${{ inputs.project_version != '' }}
+        run: gradle setVersion -PnewVersion=${{ inputs.project_version }}
 
       -
         name: Gradle - Build
@@ -87,10 +83,11 @@ jobs:
         name: Commit version change
         uses: EndBug/add-and-commit@v8
         with:
-          add: './gradle.propertie'
+          add: './gradle.properties'
           message: 'Release - Version modification'
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+          tag: v${{ inputs.project_version }}
 
       -
         name: Caching test files
@@ -146,10 +143,3 @@ jobs:
         with:
           token: ${{ secrets.codecov_token }}
           flags: build
-
-  increment_version:
-    needs: [build]
-    name: Incrementation of project version
-    uses: ./.github/workflows/gradle-get-versions.yml
-    with:
-      group_to_increment: "patch"

@@ -12,6 +12,14 @@ on:
         description: "If the new version is a release"
         required: false
         type: boolean
+      java_version:
+        description: "Java version to use"
+        required: true
+        type: string
+      java_dist:
+        description: "Java distribution to use"
+        required: true
+        type: string
 
 jobs:
   increment:
@@ -23,9 +31,29 @@ jobs:
         uses: actions/checkout@v2
 
       -
+        name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ inputs.java_version }}
+          distribution: ${{ inputs.java_dist }}
+
+      -
+        name: Gradle - Prepare build
+        uses: gradle/gradle-build-action@v2
+
+      -
         name: Increment version
+        if: ${{ ! inputs.isRelease }}
         run: |
-          GRADLE_ARGS = "-P${{ inputs.group_to_increment }} ${{ isRelease ? '-PisRelease' : '' }}"
+          GRADLE_ARGS="-Pincrement=${{ inputs.group_to_increment }}"
           echo $GRADLE_ARGS
           ./gradlew incrementVersion $GRADLE_ARGS
+
+      -
+        name: Increment version
+        if: ${{ inputs.isRelease }}
+        run: |
+          GRADLE_ARGS="-Pincrement=${{ inputs.group_to_increment }} -PisRelease"
+          echo $GRADLE_ARGS
+          gradle incrementVersion $GRADLE_ARGS
           
