@@ -3,13 +3,9 @@ name: Gradle - Build
 on:
   workflow_call:
     inputs:
-      raw_version:
-        description: "Project version without modification"
-        required: true
-        type: string
       project_version:
         description: "Project version"
-        required: false
+        required: true
         type: string
       java_version:
         description: "Java version to use"
@@ -40,13 +36,13 @@ jobs:
         name: Generate build key
         id: build_key
         run: |
-          KEY=${{ inputs.raw_version }}-artifacts-${{ github.run_id }}
+          KEY=${{ inputs.project_version }}-artifacts-${{ github.run_id }}
           echo "::set-output name=key::$KEY"
 
       - name: Generate Unit Test key
         id: unit_test_key
         run: |
-          KEY=${{ inputs.raw_version }}-build_results-${{ github.run_id }}
+          KEY=${{ inputs.project_version }}-build_results-${{ github.run_id }}
           echo "::set-output name=key::$KEY"
 
   build:
@@ -103,7 +99,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ./build/libs/bouchon-${{ inputs.raw_version }}.jar
+            ./build/libs/bouchon-${{ inputs.project_version }}.jar
           key: ${{ needs.generate_cache_keys.outputs.build }}
 
   unit_test_results:
