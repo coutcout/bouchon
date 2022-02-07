@@ -102,6 +102,12 @@ jobs:
             ./build/libs/bouchon-${{ inputs.project_version }}.jar
           key: ${{ needs.generate_cache_keys.outputs.build }}
 
+      -
+        name: Rollback tag
+        if: failure()
+        run: |
+          git push --delete origin v${{ inputs.project_version }}
+
   unit_test_results:
     name: Generate Unit Tests report
     runs-on: ubuntu-latest
