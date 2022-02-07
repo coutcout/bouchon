@@ -10,7 +10,6 @@ jobs:
     needs: versions
     uses: ./.github/workflows/gradle-build.yml
     with:
-      raw_version: ${{ needs.versions.outputs.raw_version }}
       project_version: ${{ needs.versions.outputs.version }}
       java_version: "11"
       java_dist: "adopt"
