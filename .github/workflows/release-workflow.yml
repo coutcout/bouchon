@@ -1,9 +1,7 @@
 name: Release workflow
 
 on:
-  push:
-    tags:
-      - v*
+  workflow_dispatch:
 
 jobs:
   versions:
@@ -14,9 +12,9 @@ jobs:
     uses: ./.github/workflows/gradle-build.yml
     with:
       raw_version: ${{ needs.versions.outputs.raw_version }}
+      project_version: ${{ needs.versions.outputs.version }}
       java_version: "11"
       java_dist: "adopt"
-      tag_version: ${{ github.ref_name }}
     secrets:
       codecov_token: ${{ secrets.CODECOV_TOKEN }}
 

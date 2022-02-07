@@ -19,10 +19,6 @@ on:
         description: "Java distribution to use"
         required: true
         type: string
-      tag_version:
-        description: "Tag version"
-        required: false
-        type: string
     outputs:
       cache-key:
         description: "Key of the build files cache"
@@ -76,8 +72,8 @@ jobs:
 
       -
         name: Change version
-        if: ${{ inputs.tag_version != '' &&  (inputs.project_version == '' || inputs.tag_version != inputs.project_version) }}
-        run: gradle setVersion -PnewVersion=${{inputs.tag_version}}
+        if: ${{ inputs.project_version != '' }}
+        run: gradle setVersion -PnewVersion=${{ inputs.project_version }}
 
       -
         name: Gradle - Build
@@ -91,6 +87,7 @@ jobs:
           message: 'Release - Version modification'
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+          tag: v${{ inputs.project_version }}
 
       -
         name: Caching test files
