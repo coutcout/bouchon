@@ -6,9 +6,31 @@ jobs:
   versions:
     uses: ./.github/workflows/gradle-get-versions.yml
 
+  control_tag:
+    needs: [versions]
+    name: Controle if tag already exists
+    runs-on: ubuntu-latest
+    outputs:
+      tag_already_exists: ${{ steps.get_tag.outputs.tag_exists }}
+    steps:
+      -
+        name: Checkout sourcecode
+        uses: actions/checkout@v2
+
+      -
+        name: Get tag if exists
+        id: get_tag
+        run: |
+          git --version
+          git fetch --tag
+          git tag --list
+          TAG=$(git tag --list | grep -w "v${{ needs.versions.outputs.version }}" || :)
+          if [ -z "$TAG"] ; then exit 0; else echo "::error::Tag v${{ needs.versions.outputs.version }} already exists"; exit 1; fi
+
   build:
-    needs: versions
+    needs: [versions, control_tag]
     uses: ./.github/workflows/gradle-build.yml
+    if: success()
     with:
       project_version: ${{ needs.versions.outputs.version }}
       java_version: "11"
@@ -19,6 +41,7 @@ jobs:
   increment_version:
     needs: [build]
     name: Incrementation of project version
+    if: success()
     uses: ./.github/workflows/gradle-increment-version.yml
     with:
       group_to_increment: "patch"
@@ -28,6 +51,7 @@ jobs:
   docker-build-push:
     needs: [versions, build]
     uses: ./.github/workflows/docker-push.yml
+    if: success()
     with:
       cache-key: ${{ needs.build.outputs.cache-key }}
       jar-path: ./build/libs/bouchon-${{ needs.versions.outputs.raw_version }}.jar
