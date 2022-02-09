@@ -54,8 +54,8 @@ jobs:
     if: success()
     with:
       cache-key: ${{ needs.build.outputs.cache-key }}
-      jar-path: ./build/libs/bouchon-${{ needs.versions.outputs.raw_version }}.jar
-      image-tag: ${{ needs.versions.outputs.raw_version }}
+      jar-path: ./build/libs/bouchon-${{ needs.versions.outputs.version }}.jar
+      image-tag: ${{ needs.versions.outputs.version }}
       docker-build-args: |
         CONFIG_FOLDER=./config
       docker-push: true
