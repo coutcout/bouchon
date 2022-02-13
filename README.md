@@ -2,23 +2,18 @@
 
 [![codecov](https://codecov.io/gh/coutcout/bouchon/branch/develop/graph/badge.svg?token=CJPS2U6W16)](https://codecov.io/gh/coutcout/bouchon)
 
-## Utilisation
-
-### Démarrage
-#### Récupération de l'image
+## Quick Start
+### Récupération de l'image
 L'image est disponible sur le [hub docker](https://hub.docker.com) à l'adresse [https://hub.docker.com/r/coutcout/bouchon](https://hub.docker.com/r/coutcout/bouchon).
 
 Pour récupérer l'image, exécuter la commande suivante: <code>docker pull coutcout/bouchon:TAG</code>
 
-#### Dossier de stockage des fichiers de données
+### Configuration de l'application
+#### Configurer un endpoint
+##### <a name="fichier_conf_endpoint"></a>Création du fichier de définition des endpoints
+Un endpoint doit être définit dans un fichier yml qui sera envoyé via le service <a href="#post_conf_endpoint">POST /config/endpoint</a>.
 
-Lorsqu'un endpoint est appelé, l'application renvoie le contenu du fichier associé au endpoint.
-
-Les fichiers doivent être stockés dans le répertoire ['data'](#data_folder)
-
-#### Configuration de l'application
-##### Configurer un endpoint
-Un endpoint doit être définit dans un fichier yml qui sera envoyé via le service POST /config/endpoint.
+Il est possible de mettre plusieurs endpoint dans un même fichier yaml.
 
 ```yaml
 - name: test1
@@ -65,21 +60,38 @@ Un endpoint doit être définit dans un fichier yml qui sera envoyé via le serv
     <dt>parameters</dt>
     <dd>
         Liste des paramètres qui sont utilisé dans les templates avec leur type.<br/>
-        Le type doit correspondre à un type de <a href="">regex</a>.
+        Le type doit correspondre à un type de <a href="#regex_definition">regex</a>.
     </dd>
 </dl>
 
+##### Upload du fichier de définition des endpoints
+Une fois le fichier fini, l'uploader via le service <a href="#post_conf_endpoint">POST /config/endpoint</a>.
 
-##### Liste des fichiers de configurations
+###### Rechargement des endpoints
+Une fois l'upload terminé, recharger les endpoints de l'application en appelant le service <a href="#post_reload">POST /config/endpoint/reload</a>.
+
+Le bouchon est prêt à être utilisé.
+
+#### Dossier de stockage des fichiers de données
+
+Lorsqu'un endpoint est appelé, l'application renvoie le contenu du fichier associé au endpoint.
+
+Les fichiers doivent être stockés dans le répertoire ['data'](#data_folder).
+
+Actuellement, les fichiers data doivent être forcément déposés à la main dans le container.
+
+Il est possible de le faire via un mapping de dossiers.
+
+## Liste des fichiers de configurations
 Les fichiers de configuration de l'application sont stockés dans le répertoire **/home/config**
 
-###### application.yml
+### application.yml
 Fichier de configuration racine, il permet de:
 * Importer les autres fichiers de configuration
 * Définir le port d'exposition (par défaut:8080)
 
-###### application-bouchon.yml
-Profil spring: bouchon
+### application-bouchon.yml
+**Profil spring**: bouchon
 
 Ce fichier détermine deux propriétés:
 * <a name="data_folder"></a>bouchon.folder.data
@@ -95,8 +107,8 @@ Ce fichier détermine deux propriétés:
     > 
     > Valeur par défaut: **/home/bouchon/config** 
 
-###### application-custom-regex.yml
-Profil spring: custom-regex
+### application-custom-regex.yml
+**Profil spring**: custom-regex
 
 Ce fichier décrit des potentielles regex personnalisées sous la propriété **bouchon.regex**.
 
@@ -124,19 +136,94 @@ Par défaut, des regex existent déjà:
 
 Pour rajouter des regex, il est donc nécessaire de remplacer le fichier application-custom-regex.yml.
 
-###### application-log.yml
-Profil spring: log
+### application-log.yml
+**Profil spring**: log
 
 Ce fichier détermine les loggers utilisés ainsi que leur level pour les logs applicatifs
 
 Par défaut, les logs sont stockés dans le répertoire **/mnt/logs**.
 
-###### application-messages.yml
-Profil spring: messages
+### application-messages.yml
+**Profil spring**: messages
 
 Ce fichier détermine l'ensemble des messages de log.
 
 Dans un but d'internationnalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
+
+## Services
+### <a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint
+**POST** /config/endpoint
+
+Service permettant d'uploader un ou plusieurs <a href="#fichier_conf_endpoint">fichiers de définition de endpoints</a>.
+
+#### Paramètres dans le body de la requête
+<dl>
+    <dt>files</dt>
+    <dd>Champs de type file, accepte plusieurs fichier yaml/yml</dd>
+    <dt>name</dt>
+    <dd>
+        Nom du fichier de définition tel qu'il sera stocké sur le serveur.<br/>
+        Le nom du fichier sera préfixé de la date du jour au format <b>yyyyMMdd</b>.<br/>
+        Lorsque plusieurs fichiers sont envoyés, les noms seront incrémentés.
+        <b>Example:</b>
+        <ul>
+            <li>test</li>
+            <li>test_001</li>
+            <li>test_002</li>
+            <li>...</li>
+        </ul>
+    </dd>
+</dl>
+
+### <a name="delete_conf_endpoint"></a>Suppression d'un fichier de définition de endpoint
+**DELETE** /config/endpoint/<NOM_FICHIER_DEFINITION>
+
+Service permettant de supprimer un <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
+
+#### Paramètres dans l'URL de la requête
+<dl>
+    <dt>NOM_FICHIER_DEFINITION</dt>
+    <dd>Nom du fichier donné via le <a href="#post_conf_endpoint">service d'upload</a></dd>
+</dl>
+
+### <a name="get_conf_endpoint"></a>Lister les fichiers de définition de endpoint
+**GET** /config/endpoint
+
+Service permettant de lister l'ensemble des <a href="#fichier_conf_endpoint">fichiers de définition de endpoints</a>
+
+### <a name="reload_endpoint"></a>Recharger les endpoints
+**POST** /config/endpoint/reload
+
+Service permettant de recharger l'ensemble des endpoints disponibles à la suite d'un <a href="#post_conf_endpoint">ajout</a>/<a href="#delete_conf_endpoint">retrait</a>/<a href="#activate_conf_endpoint">activation</a>/<a href="#deactivate_conf_endpoint">désactivation</a> de <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
+
+### <a name="activate_conf_endpoint"></a>Activer un fichier de définition de endpoint
+**PUT** /config/endpoint/<NOM_FICHIER_DEFINITION>/activate
+
+Service permettant d'activer un <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
+
+#### Paramètres dans l'URL de la requête
+<dl>
+    <dt>NOM_FICHIER_DEFINITION</dt>
+    <dd>
+        Nom du fichier donné via le <a href="#post_conf_endpoint">service d'upload</a>.<br>
+        Dans le cadre de d'un fichier désactivé, sur le serveur, il est suffixé d'un <b>.deactivated</b>. Pour autant, il est nécessaire de passer uniquement le nom du fichier sans extension à ce service.
+    </dd>
+</dl>
+
+### <a name="deactivate_conf_endpoint"></a>Désactiver un fichier de définition de endpoint
+**PUT** /config/endpoint/<NOM_FICHIER_DEFINITION>/deactivate
+
+Service permettant de désactiver un <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
+
+Afin de le désactiver, un fichier est suffixé de l'extention **.deactivated**.
+
+#### Paramètres dans l'URL de la requête
+<dl>
+    <dt>NOM_FICHIER_DEFINITION</dt>
+    <dd>
+        Nom du fichier donné via le <a href="#post_conf_endpoint">service d'upload</a>.<br>
+    </dd>
+</dl>
 
 ## Développement
 
