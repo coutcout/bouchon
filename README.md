@@ -92,7 +92,8 @@ Fichier de configuration racine, il permet de:
 * Définir le port d'exposition (par défaut:8080)
 </details>
 
-### application-bouchon.yml
+<details><summary>application-bouchon.yml</summary>
+
 **Profil spring**: bouchon
 
 Ce fichier détermine deux propriétés:
@@ -107,9 +108,11 @@ Ce fichier détermine deux propriétés:
     >
     > Les fichiers de configuration peuvent être uploader soit par mapping de dossier entre le container et la machine host, soit par le service **POST /config/endpoint**.
     > 
-    > Valeur par défaut: **/home/bouchon/config** 
+    > Valeur par défaut: **/home/bouchon/config**
+</details>
 
-### application-custom-regex.yml
+<details><summary>application-custom-regex.yml</summary>
+
 **Profil spring**: custom-regex
 
 Ce fichier décrit des potentielles regex personnalisées sous la propriété **bouchon.regex**.
@@ -137,20 +140,25 @@ Par défaut, des regex existent déjà:
 | date-yyyy-mm-dd | <code>\d{4}-\d{2}-\d{2}</code>    |
 
 Pour rajouter des regex, il est donc nécessaire de remplacer le fichier application-custom-regex.yml.
+</details>
 
-### application-log.yml
+<details><summary>application-log.yml</summary>
+
 **Profil spring**: log
 
 Ce fichier détermine les loggers utilisés ainsi que leur level pour les logs applicatifs
 
 Par défaut, les logs sont stockés dans le répertoire **/mnt/logs**.
+</details>
 
-### application-messages.yml
+<details><summary>application-messages.yml</summary>
+
 **Profil spring**: messages
 
 Ce fichier détermine l'ensemble des messages de log.
 
 Dans un but internationalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
+</details>
 
 ## Services
 <details><summary><a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint</summary>
