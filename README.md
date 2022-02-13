@@ -151,12 +151,12 @@ Ce fichier détermine l'ensemble des messages de log.
 Dans un but d'internationnalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
 
 ## Services
-<details><summary>### <a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint</summary>
+<details><summary><a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint</summary>
 **POST** /config/endpoint
 
 Service permettant d'uploader un ou plusieurs <a href="#fichier_conf_endpoint">fichiers de définition de endpoints</a>.
 
-#### Paramètres dans le body de la requête
+### Paramètres dans le body de la requête
 <dl>
     <dt>files</dt>
     <dd>Champs de type file, accepte plusieurs fichier yaml/yml</dd>
@@ -175,6 +175,7 @@ Service permettant d'uploader un ou plusieurs <a href="#fichier_conf_endpoint">f
     </dd>
 </dl>
 </details>
+
 ### <a name="delete_conf_endpoint"></a>Suppression d'un fichier de définition de endpoint
 **DELETE** /config/endpoint/<NOM_FICHIER_DEFINITION>
 
