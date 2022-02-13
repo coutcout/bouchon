@@ -148,15 +148,15 @@ Par défaut, les logs sont stockés dans le répertoire **/mnt/logs**.
 
 Ce fichier détermine l'ensemble des messages de log.
 
-Dans un but d'internationnalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
+Dans un but internationalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
 
 ## Services
 <details><summary><a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint</summary>
-**POST** /config/endpoint
+<i><b>POST</b> /config/endpoint</i>
 
 Service permettant d'uploader un ou plusieurs <a href="#fichier_conf_endpoint">fichiers de définition de endpoints</a>.
 
-Paramètres dans le body de la requête
+Paramètres dans le body de la requête:
 
 | Nom du paramètre | Description du paramètre                                                                                                                                                                                                                                                                                         |
 |------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -165,11 +165,11 @@ Paramètres dans le body de la requête
 </details>
 
 <details><summary><a name="delete_conf_endpoint"></a>Suppression d'un fichier de définition de endpoint</summary>
-**DELETE** /config/endpoint/{NOM_FICHIER_DEFINITION}
+<i><b>DELETE</b> /config/endpoint/{NOM_FICHIER_DEFINITION}</i>
 
 Service permettant de supprimer un <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
 
-Paramètres dans l'URL de la requête
+Paramètres dans l'URL de la requête:
 
 | Nom du paramètre       | Description du paramètre                                                       |
 |------------------------|--------------------------------------------------------------------------------|
@@ -177,23 +177,23 @@ Paramètres dans l'URL de la requête
 </details>
 
 <details><summary><a name="get_conf_endpoint"></a>Lister les fichiers de définition de endpoint</summary>
-**GET** /config/endpoint
+<i><b>GET</b> /config/endpoint</i>
 
 Service permettant de lister l'ensemble des <a href="#fichier_conf_endpoint">fichiers de définition de endpoints</a>
 </details>
 
 <details><summary><a name="reload_endpoint"></a>Recharger les endpoints</summary>
-**POST** /config/endpoint/reload
+<i><b>POST</b> /config/endpoint/reload</i>
 
 Service permettant de recharger l'ensemble des endpoints disponibles à la suite d'un <a href="#post_conf_endpoint">ajout</a>/<a href="#delete_conf_endpoint">retrait</a>/<a href="#activate_conf_endpoint">activation</a>/<a href="#deactivate_conf_endpoint">désactivation</a> de <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
 </details>
 
 <details><summary><a name="activate_conf_endpoint"></a>Activer un fichier de définition de endpoint</summary>
-**PUT** /config/endpoint/{NOM_FICHIER_DEFINITION}/activate
+<i><b>PUT</b> /config/endpoint/{NOM_FICHIER_DEFINITION}/activate</i>
 
 Service permettant d'activer un <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
 
-Paramètres dans l'URL de la requête
+Paramètres dans l'URL de la requête:
 
 | Nom du paramètre       | Description du paramètre                                                                                                                                                                                                                                                                |
 |------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -201,13 +201,13 @@ Paramètres dans l'URL de la requête
 </details>
 
 <details><summary><a name="deactivate_conf_endpoint"></a>Désactiver un fichier de définition de endpoint</summary>
-**PUT** /config/endpoint/{NOM_FICHIER_DEFINITION}/deactivate
+<i><b>PUT</b> /config/endpoint/{NOM_FICHIER_DEFINITION}/deactivate</i>
 
 Service permettant de désactiver un <a href="#fichier_conf_endpoint">fichier de définition de endpoints</a>.
 
 Afin de le désactiver, un fichier est suffixé de l'extention **.deactivated**.
 
-Paramètres dans l'URL de la requête
+Paramètres dans l'URL de la requête:
 
 | Nom du paramètre       | Description du paramètre                                                       |
 |------------------------|--------------------------------------------------------------------------------|
