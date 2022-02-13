@@ -68,7 +68,7 @@ Il est possible de mettre plusieurs endpoint dans un même fichier yaml.
 Une fois le fichier fini, l'uploader via le service <a href="#post_conf_endpoint">POST /config/endpoint</a>.
 
 ###### Rechargement des endpoints
-Une fois l'upload terminé, recharger les endpoints de l'application en appelant le service <a href="#post_reload">POST /config/endpoint/reload</a>.
+Une fois l'upload terminé, recharger les endpoints de l'application en appelant le service <a href="#reload_endpoints">POST /config/endpoint/reload</a>.
 
 Le bouchon est prêt à être utilisé.
 
@@ -151,7 +151,7 @@ Ce fichier détermine l'ensemble des messages de log.
 Dans un but d'internationnalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
 
 ## Services
-### <a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint
+<details><summary>### <a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint</summary>
 **POST** /config/endpoint
 
 Service permettant d'uploader un ou plusieurs <a href="#fichier_conf_endpoint">fichiers de définition de endpoints</a>.
@@ -174,7 +174,7 @@ Service permettant d'uploader un ou plusieurs <a href="#fichier_conf_endpoint">f
         </ul>
     </dd>
 </dl>
-
+</details>
 ### <a name="delete_conf_endpoint"></a>Suppression d'un fichier de définition de endpoint
 **DELETE** /config/endpoint/<NOM_FICHIER_DEFINITION>
 
