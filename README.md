@@ -85,10 +85,12 @@ Il est possible de le faire via un mapping de dossiers.
 ## Liste des fichiers de configurations
 Les fichiers de configuration de l'application sont stockés dans le répertoire **/home/config**
 
-### application.yml
+<details><summary>application.yml</summary>
 Fichier de configuration racine, il permet de:
+
 * Importer les autres fichiers de configuration
 * Définir le port d'exposition (par défaut:8080)
+</details>
 
 ### application-bouchon.yml
 **Profil spring**: bouchon
