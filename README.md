@@ -154,6 +154,9 @@ Fichier de configuration racine, il permet de:
 
 * Importer les autres fichiers de configuration
 * Définir le port d'exposition (par défaut:8080)
+
+[Disponible ici](./config/application.yml)
+
 </details>
 
 <details><summary><a name="application_bouchon_yml"></a>application-bouchon.yml</summary>
@@ -173,6 +176,8 @@ Ce fichier détermine deux propriétés:
   > Les fichiers de configuration peuvent être uploader soit par mapping de dossier entre le container et la machine host, soit par le service **POST /config/endpoint**.
   >
   > Valeur par défaut: **/home/bouchon/config**
+
+[Disponible ici](./config/application-bouchon.yml)
 </details>
 
 <details><summary><a name="regex"></a>application-custom-regex.yml</summary>
@@ -204,6 +209,8 @@ Par défaut, des regex existent déjà:
 | date-yyyy-mm-dd | <code>\d{4}-\d{2}-\d{2}</code>    |
 
 Pour rajouter des regex, il est donc nécessaire de remplacer le fichier application-custom-regex.yml.
+
+[Disponible ici](./config/application-custom-regex.yml)
 </details>
 
 <details><summary>application-log.yml</summary>
@@ -213,6 +220,8 @@ Pour rajouter des regex, il est donc nécessaire de remplacer le fichier applica
 Ce fichier détermine les loggers utilisés ainsi que leur level pour les logs applicatifs
 
 Par défaut, les logs sont stockés dans le répertoire **/mnt/logs**.
+
+[Disponible ici](./config/application-log.yml)
 </details>
 
 <details><summary>application-messages.yml</summary>
@@ -222,6 +231,8 @@ Par défaut, les logs sont stockés dans le répertoire **/mnt/logs**.
 Ce fichier détermine l'ensemble des messages de log.
 
 Dans un but internationalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
+
+[Disponible ici](./config/application-messages.yml)
 </details>
 
 ## Développement
