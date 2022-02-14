@@ -37,7 +37,7 @@ Il est possible de mettre plusieurs endpoint dans un même fichier yaml.
     <dt>name</dt>
     <dd>Nom du endpoint</dd> 
     <dt>folderName</dt>
-    <dd>Nom du sous-dossier (à l'intérieur du dossier <a href="#data_folder">data</a>) dans lequel devront être stockées toutes les réponses</dd>
+    <dd>Nom du sous-dossier (à l'intérieur du dossier <a href="#application_bouchon_yml">data</a>) dans lequel devront être stockées toutes les réponses</dd>
     <dt>requestParameterPlace</dt>
     <dd>
         Emplacement des paramètres de la requête.<br/>
@@ -76,7 +76,7 @@ Le bouchon est prêt à être utilisé.
 
 Lorsqu'un endpoint est appelé, l'application renvoie le contenu du fichier associé au endpoint.
 
-Les fichiers doivent être stockés dans le répertoire ['data'](#data_folder).
+Les fichiers doivent être stockés dans le répertoire ['data'](#application_bouchon_yml).
 
 Actuellement, les fichiers data doivent être forcément déposés à la main dans le container.
 
@@ -92,7 +92,7 @@ Fichier de configuration racine, il permet de:
 * Définir le port d'exposition (par défaut:8080)
 </details>
 
-<details><summary>application-bouchon.yml</summary>
+<details><summary><a name="application_bouchon_yml"></a>application-bouchon.yml</summary>
 
 **Profil spring**: bouchon
 
@@ -230,7 +230,8 @@ Paramètres dans l'URL de la requête:
 
 Les fichiers de configuration étant séparés de l'application, il est nécessaire de spécifier leur emplacement à l'aide de l'option jvm suivante:
 >--spring.config.location=<PATH_TO_APPLICATION_YAML>
-## TODO
+
+<details><summary><h2 style="display:inline-block;">TODO</h2></summary>
 
 ### 1.0.0
 
@@ -298,3 +299,4 @@ Les fichiers de configuration étant séparés de l'application, il est nécessa
     * Suppression du fichier dans le bon endpoint
     * Gestion des erreur
   
+</details>
