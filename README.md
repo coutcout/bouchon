@@ -60,7 +60,7 @@ Il est possible de mettre plusieurs endpoint dans un même fichier yaml.
     <dt>parameters</dt>
     <dd>
         Liste des paramètres qui sont utilisé dans les templates avec leur type.<br/>
-        Le type doit correspondre à un type de <a href="#regex_definition">regex</a>.
+        Le type doit correspondre à un type de <a href="#regex">regex</a>.
     </dd>
 </dl>
 
@@ -81,84 +81,6 @@ Les fichiers doivent être stockés dans le répertoire ['data'](#application_bo
 Actuellement, les fichiers data doivent être forcément déposés à la main dans le container.
 
 Il est possible de le faire via un mapping de dossiers.
-
-## Liste des fichiers de configurations
-Les fichiers de configuration de l'application sont stockés dans le répertoire **/home/config**
-
-<details><summary>application.yml</summary>
-Fichier de configuration racine, il permet de:
-
-* Importer les autres fichiers de configuration
-* Définir le port d'exposition (par défaut:8080)
-</details>
-
-<details><summary><a name="application_bouchon_yml"></a>application-bouchon.yml</summary>
-
-**Profil spring**: bouchon
-
-Ce fichier détermine deux propriétés:
-* <a name="data_folder"></a>bouchon.folder.data
-    > Dossier dans lequel les fichiers renvoyés par le bouchon doivent être stockés.
-    > 
-    > Chaque endpoint dispose de son sous-dossier défini dans le fichier de configuration du endpoint.
-    >
-    > Valeur par défaut: **/mnt/data** 
-* bouchon.folder.config
-    > Dossier dans lequel les fichiers de configuration des endpoints seront stockés
-    >
-    > Les fichiers de configuration peuvent être uploader soit par mapping de dossier entre le container et la machine host, soit par le service **POST /config/endpoint**.
-    > 
-    > Valeur par défaut: **/home/bouchon/config**
-</details>
-
-<details><summary>application-custom-regex.yml</summary>
-
-**Profil spring**: custom-regex
-
-Ce fichier décrit des potentielles regex personnalisées sous la propriété **bouchon.regex**.
-
-Chaque regex devra être définie de la manière suivante: <code>nom_regex: regex</code>
-> exemple
-> 
-> bouchon.regex:
->   regex1: "\d{2}"
-
-Par défaut, des regex existent déjà:
-* Dans l'application:
-
-| Nom de la regex | Regex                      |
-|-----------------|----------------------------|
-| string          | <code>\w+</code>           |
-| number          | <code>\d+</code>           |
-| boolean         | <code>true\|false</code>   |
-
-* Dans le fichier application-custom-regex.yml
-
-| Nom de la regex | Regex                             |
-|-----------------|-----------------------------------|
-| date-yyyymmdd   | <code>\d{8}</code>                |
-| date-yyyy-mm-dd | <code>\d{4}-\d{2}-\d{2}</code>    |
-
-Pour rajouter des regex, il est donc nécessaire de remplacer le fichier application-custom-regex.yml.
-</details>
-
-<details><summary>application-log.yml</summary>
-
-**Profil spring**: log
-
-Ce fichier détermine les loggers utilisés ainsi que leur level pour les logs applicatifs
-
-Par défaut, les logs sont stockés dans le répertoire **/mnt/logs**.
-</details>
-
-<details><summary>application-messages.yml</summary>
-
-**Profil spring**: messages
-
-Ce fichier détermine l'ensemble des messages de log.
-
-Dans un but internationalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
-</details>
 
 ## Services
 <details><summary><a name="post_conf_endpoint"></a>Upload d'un fichier de définition de endpoint</summary>
@@ -224,6 +146,84 @@ Paramètres dans l'URL de la requête:
 | NOM_FICHIER_DEFINITION | Nom du fichier donné via le <a href="#post_conf_endpoint">service d'upload</a>. |
 </details>
 
+## Liste des fichiers de configurations
+Les fichiers de configuration de l'application sont stockés dans le répertoire **/home/config**
+
+<details><summary>application.yml</summary>
+Fichier de configuration racine, il permet de:
+
+* Importer les autres fichiers de configuration
+* Définir le port d'exposition (par défaut:8080)
+</details>
+
+<details><summary><a name="application_bouchon_yml"></a>application-bouchon.yml</summary>
+
+**Profil spring**: bouchon
+
+Ce fichier détermine deux propriétés:
+* <a name="data_folder"></a>bouchon.folder.data
+  > Dossier dans lequel les fichiers renvoyés par le bouchon doivent être stockés.
+  >
+  > Chaque endpoint dispose de son sous-dossier défini dans le fichier de configuration du endpoint.
+  >
+  > Valeur par défaut: **/mnt/data**
+* bouchon.folder.config
+  > Dossier dans lequel les fichiers de configuration des endpoints seront stockés
+  >
+  > Les fichiers de configuration peuvent être uploader soit par mapping de dossier entre le container et la machine host, soit par le service **POST /config/endpoint**.
+  >
+  > Valeur par défaut: **/home/bouchon/config**
+</details>
+
+<details><summary><a name="regex"></a>application-custom-regex.yml</summary>
+
+**Profil spring**: custom-regex
+
+Ce fichier décrit des potentielles regex personnalisées sous la propriété **bouchon.regex**.
+
+Chaque regex devra être définie de la manière suivante: <code>nom_regex: regex</code>
+> exemple
+>
+> bouchon.regex:
+>   regex1: "\d{2}"
+
+Par défaut, des regex existent déjà:
+* Dans l'application:
+
+| Nom de la regex | Regex                      |
+|-----------------|----------------------------|
+| string          | <code>\w+</code>           |
+| number          | <code>\d+</code>           |
+| boolean         | <code>true\|false</code>   |
+
+* Dans le fichier application-custom-regex.yml
+
+| Nom de la regex | Regex                             |
+|-----------------|-----------------------------------|
+| date-yyyymmdd   | <code>\d{8}</code>                |
+| date-yyyy-mm-dd | <code>\d{4}-\d{2}-\d{2}</code>    |
+
+Pour rajouter des regex, il est donc nécessaire de remplacer le fichier application-custom-regex.yml.
+</details>
+
+<details><summary>application-log.yml</summary>
+
+**Profil spring**: log
+
+Ce fichier détermine les loggers utilisés ainsi que leur level pour les logs applicatifs
+
+Par défaut, les logs sont stockés dans le répertoire **/mnt/logs**.
+</details>
+
+<details><summary>application-messages.yml</summary>
+
+**Profil spring**: messages
+
+Ce fichier détermine l'ensemble des messages de log.
+
+Dans un but internationalisation de l'application, il faudrait remplacer ce fichier par celui de la langue voulue.
+</details>
+
 ## Développement
 
 ### Lancement de l'application
@@ -231,7 +231,8 @@ Paramètres dans l'URL de la requête:
 Les fichiers de configuration étant séparés de l'application, il est nécessaire de spécifier leur emplacement à l'aide de l'option jvm suivante:
 >--spring.config.location=<PATH_TO_APPLICATION_YAML>
 
-<details><summary><h2 style="display:inline-block;">TODO</h2></summary>
+## TODO
+<details><summary>Cliquez pour voir</summary>
 
 ### 1.0.0
 
