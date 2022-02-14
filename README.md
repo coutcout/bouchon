@@ -1,6 +1,6 @@
 # bouchon
 [![Snapshot workflow](https://github.com/coutcout/bouchon/actions/workflows/snapshot-workflow.yml/badge.svg?branch=main)](https://github.com/coutcout/bouchon/actions/workflows/snapshot-workflow.yml)
-[![codecov](https://codecov.io/gh/coutcout/bouchon/branch/develop/graph/badge.svg?token=CJPS2U6W16)](https://codecov.io/gh/coutcout/bouchon)
+[![codecov](https://codecov.io/gh/coutcout/bouchon/branch/main/graph/badge.svg?token=CJPS2U6W16)](https://codecov.io/gh/coutcout/bouchon)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ef92d97e97b2b59e4998/maintainability)](https://codeclimate.com/github/coutcout/bouchon/maintainability)
 
 ## Quick Start
